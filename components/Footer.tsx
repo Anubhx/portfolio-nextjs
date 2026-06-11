@@ -9,7 +9,7 @@ export default function Footer() {
     <footer id="footer">
       <div className="container grid grid-cols-1 md:grid-cols-12 gap-12">
         <div className="md:col-span-6 flex flex-col gap-4">
-          <p className="font-serif text-2xl">{BIO.name}</p>
+          <p className="font-display text-2xl">{BIO.name}</p>
           <p className="editorial-body text-sm max-w-xs">{FOOTER.tagline}</p>
         </div>
         

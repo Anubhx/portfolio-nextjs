@@ -24,7 +24,7 @@
   --radius-sm: 0px;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-serif), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-display: var(--font-display), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -46,13 +46,13 @@
     line-height: 1.6;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif tracking-tight text-foreground font-normal;
+    @apply font-display tracking-tight text-foreground font-normal;
   }
 }
 
 /* ─── TYPOGRAPHY & UTILS ─────────────────────────────────────────────────── */
 @utility editorial-heading {
-  @apply font-serif text-5xl md:text-7xl lg:text-8xl leading-[1.1] tracking-tight;
+  @apply font-display text-5xl md:text-7xl lg:text-8xl leading-[1.1] tracking-tight;
 }
 
 @utility editorial-body {
@@ -99,7 +99,7 @@
 }
 
 .hero-headline {
-  @apply font-serif text-5xl md:text-7xl lg:text-8xl leading-[1.1] tracking-tight max-w-4xl;
+  @apply font-display text-5xl md:text-7xl lg:text-8xl leading-[1.1] tracking-tight max-w-4xl;
 }
 
 .hero-sub {
@@ -132,7 +132,7 @@
 }
 
 .work-title {
-  @apply font-serif text-4xl md:text-5xl;
+  @apply font-display text-4xl md:text-5xl;
 }
 
 .work-desc {

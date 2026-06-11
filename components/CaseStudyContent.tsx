@@ -28,7 +28,7 @@ export default function CaseStudyContent({ children }: CaseStudyContentProps) {
         .mdx-editorial-content h1, 
         .mdx-editorial-content h2, 
         .mdx-editorial-content h3 {
-          font-family: var(--font-serif);
+          font-family: var(--font-display);
           color: var(--text);
           font-weight: normal;
           margin-top: 4rem;
@@ -48,7 +48,7 @@ export default function CaseStudyContent({ children }: CaseStudyContentProps) {
 
         /* Drop cap for first paragraph */
         .mdx-editorial-content > p:first-of-type::first-letter {
-          font-family: var(--font-serif);
+          font-family: var(--font-display);
           float: left;
           font-size: 5rem;
           line-height: 0.8;
@@ -78,7 +78,7 @@ export default function CaseStudyContent({ children }: CaseStudyContentProps) {
         }
 
         .mdx-editorial-content blockquote {
-          font-family: var(--font-serif);
+          font-family: var(--font-display);
           font-size: 1.5rem;
           line-height: 1.4;
           color: var(--text);

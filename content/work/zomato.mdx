@@ -1,0 +1,117 @@
+---
+title: "Zomato Group Order"
+---
+
+> The hardest part of lunch wasn't choosing what to eat. It was everything people had to do before they could.
+
+## 1. Context
+
+We talk a lot about "frictionless" food delivery. But the reality for office workers is anything but frictionless. 
+
+While Zomato made it easy to order a meal for one, ordering a meal for seven people was a logistical nightmare. I observed teams orchestrating lunch across three different applications before they ever opened Zomato. They were building their own workarounds to solve a problem the product had ignored: **the invisible coordination work.**
+
+## 2. The Hidden Problem
+
+Food ordering wasn't actually the problem. The problem was the social friction. 
+
+It looked like this:
+1. **WhatsApp:** "What are we eating today?" "Who's ordering?"
+2. **Google Forms / Excel:** "Put your orders in here by 12:30."
+3. **The Compromise:** "Can we just agree on one restaurant so we save on delivery?"
+4. **The Money Chasing:** "Can everyone send me ₹250 on UPI?" 
+
+The emotional labor of being the "group admin" was a massive deterrent to large orders. People were opting out of group lunches entirely just to avoid the hassle of debt collection.
+
+## 3. Research
+
+To move past assumptions, I conducted rigorous, structured research with the people who felt this pain the most: the designated lunch admins.
+
+**Methodology:**
+- 5 In-depth user interviews (Office managers, team leads, regular lunch organizers)
+- Contextual inquiry (Watching them organize a Friday lunch)
+- Journey mapping the "off-platform" experience.
+
+**What they said:**
+> *"I literally have an Excel sheet to track who hasn't paid me for Tuesday's lunch."*
+
+> *"I hate having to nag my manager for 150 rupees."*
+
+The research synthesis proved that the opportunity wasn't just "let people add to a cart." It was about removing the social anxiety of group coordination.
+
+## 4. Opportunity Areas
+
+I translated the qualitative insights into three distinct opportunity areas:
+
+- **Decentralized Input:** Allow everyone to browse and add items independently from their own devices.
+- **Unified Checkout, Split Payments:** Let one person hit "order," but let the system handle the awkward math of who owes what.
+- **Asynchronous Coordination:** Remove the need for real-time WhatsApp polling.
+
+## 5. Journey Mapping
+
+Mapping the current-state journey revealed that the lowest emotional dip wasn't waiting for the food—it was the moment the food arrived and the admin realized they hadn't been paid by three people. 
+
+The friction points were entirely concentrated in the *pre-order* and *post-consumption* phases. The actual ordering phase in Zomato was the only smooth part of the journey. The goal was to expand Zomato's smooth UX to cover the messy edges.
+
+## 6. Product Principles
+
+Before designing a single screen, I established the principles that would govern the UX:
+
+- **Design for familiarity:** Use existing Zomato UI patterns so the group order feels native.
+- **Reduce coordination overhead:** No one should have to ask "what do you want?"
+- **Make social friction invisible:** The app should be the one asking for money, not the admin.
+- **Trust through transparency:** Everyone needs to see exactly what they are paying for, including their exact split of taxes and delivery.
+
+## 7. Design Exploration
+
+Early concepts explored a "shared screen" model where the admin passed their phone around. This was immediately rejected because it didn't solve the asynchronous coordination problem. 
+
+Another concept forced everyone to pay upfront before the order could be placed. We rejected this because it introduced a massive bottleneck—if one person was in a meeting, the whole order stalled. The trade-off was to allow the admin to place the order, but automate the payment requests immediately after.
+
+## 8. UX Laws Applied
+
+Abstract principles had to become concrete decisions:
+
+- **Jakob's Law:** We kept the restaurant menu UI identical to the standard flow so users didn't have to learn a new mental model.
+- **Hick's Law:** We restricted group orders to a single restaurant to prevent decision paralysis and exorbitant delivery fees.
+- **Miller's Law:** We chunked the checkout screen into three clear sections: My Items, Group Items, and The Math.
+- **Fitts's Law:** The "Share Order Link" CTA was designed as a massive, thumb-friendly sticky footer, as sharing was the primary action.
+- **Tesler's Law:** We couldn't eliminate the complexity of splitting a bill with dynamic taxes, so we absorbed it. The system calculates proportional tax splits automatically.
+
+## 9. Final Experience
+
+The final flow completely replaces the WhatsApp-to-Excel pipeline.
+
+1. **Initiate:** The admin starts a Group Order and shares a deep link.
+2. **Collaborate:** Team members open the link in their own Zomato apps, adding items directly.
+3. **Review & Order:** The admin sees everything populate in real-time. No math required.
+4. **Automated Settlement:** Once ordered, Zomato automatically pings members with exactly what they owe.
+
+## 10. Testing & Iteration
+
+Design is an assumption until it hits a user. 
+
+**Round 1 Findings (The Failures):**
+Users were confused by the "Lock Order" state. They didn't know if locking the order meant they were committing to pay, or just committing their items. The copy was ambiguous, leading to hesitation.
+
+**The Evolution:**
+I completely rewrote the microcopy. "Lock Order" became "Ready to Order." I added a confirmation modal for the admin: "You are paying ₹1,200 now. Zomato will request ₹800 from your friends." 
+
+**Round 2 Improvements:**
+The clarity of the financial responsibility removed the hesitation. The completion rate of the group order flow jumped significantly during the second round of usability testing.
+
+## 11. Reflection
+
+**What surprised me?**
+How deeply emotional food ordering is. It's not just a transaction; it's social currency. 
+
+**What assumptions proved wrong?**
+I assumed people would want to split the delivery fee evenly. In reality, people wanted to split the delivery fee *proportionally* based on their order size. 
+
+**How this changed my thinking:**
+It proved to me that the best features don't look like features. They look like the sudden absence of a headache.
+
+## 12. The Bigger Lesson
+
+The best opportunities aren't invented in a brainstorming session. They reveal themselves through the awkward, duct-taped workarounds people build every day. 
+
+If you want to know what to build next, don't look at what your competitors are doing. Look at what your users are doing in spreadsheets.
