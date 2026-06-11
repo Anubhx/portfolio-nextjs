@@ -20,19 +20,22 @@
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 
+export type ProjectActionType =
+  | "caseStudy"
+  | "live"
+  | "github"
+  | "behance"
+  | "figma"
+  | "docs"
+  | "video";
+
+export type ProjectAction = {
+  enabled: boolean;
+  href: string;
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. THEME COLORS
-//    Change these to restyle the entire site instantly.
-//    bg         → page background
-//    text       → main body text
-//    secondary  → muted/subtitle text
-//    accent     → brand blue (buttons, links, labels, dots)
-//    surface    → card/panel backgrounds
-//    border     → dividers and card borders
-//    hover      → hover background on interactive elements
-//    accentLt   → light tint of accent (chip backgrounds)
-//    accentMd   → medium tint of accent (borders, dots in lists)
-//    accentDark → darker shade of accent (button hover)
 // ─────────────────────────────────────────────────────────────────────────────
 export const THEME = {
   bg: "#FAFAFA",         // warm editorial off-white
@@ -62,12 +65,11 @@ export const BIO = {
   email: "anubhavraj@example.com",               
   resumeUrl:
     "https://drive.google.com/file/d/1J47dTPjIljQP8FI9GnqwGgtPRLZBjl86/view?usp=sharing",
-  availability: null, // Removed for an editorial feel
+  availability: null, 
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 3. SOCIALS & CONTACT LINKS
-//    Set any to null to hide that link in the Contact section.
 // ─────────────────────────────────────────────────────────────────────────────
 export const SOCIALS = {
   linkedin: "https://www.linkedin.com/in/anubhax/",
@@ -81,9 +83,6 @@ export const SOCIALS = {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 4. HERO SECTION
-//    headline → big text (wrap with \n for line breaks)
-//    sub      → paragraph below headline
-//    stats    → the 3-4 trust numbers shown below the CTAs
 // ─────────────────────────────────────────────────────────────────────────────
 export const HERO = {
   headline: [
@@ -101,42 +100,30 @@ export const HERO = {
   cta2Label: "View work",
   cta2Href: "#work",
 
-  stats: [], // Removed for editorial feel
+  stats: [], 
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 5. IMAGES
-//    How to use:
-//      - Local: drop file in /public/images/ → use path "/images/filename.png"
-//      - External: paste a full https:// URL
-//      - Not ready yet: use null → shows a gradient placeholder automatically
-//
-//    See /public/images/README.md for the full naming guide.
 // ─────────────────────────────────────────────────────────────────────────────
 export const IMAGES = {
-  // ── Your profile / hero photo ──────────────────────────────────────────────
   hero: "/images/hero.jpg",
-
-  // ── College / school logos ─────────────────────────────────────────────────
   uem: null as string | null,
   school1: null as string | null,
   school2: null as string | null,
-
-  // ── Company logos (used in Experience section) ─────────────────────────────
   ltimindtree: "https://images.seeklogo.com/logo-png/61/1/ltimindtree-logo-png_seeklogo-613672.png",
   vedantu: "https://yt3.ggpht.com/a/AATXAJyMa1Do0gFwcjdCWGAOMekO0n6n6tcxO1EvDQ=s900-c-k-c0xffffffff-no-rj-mo",
   ecstasia: null as string | null,
-
-  // ── Project screenshots ────────────────────────────────────────────────────
-  zomato: "https://raw.githubusercontent.com/Anubhx/portfolio-nextjs/master/public/images/zomato.jpg" as string | null,
-  companylens: "https://raw.githubusercontent.com/Anubhx/portfolio-nextjs/master/public/images/companylens.jpg" as string | null,
-  clarity: "https://raw.githubusercontent.com/Anubhx/portfolio-nextjs/master/public/images/clarity.jpg" as string | null,
-  lexai: "https://raw.githubusercontent.com/Anubhx/portfolio-nextjs/master/public/images/lexAI.jpg" as string | null,
+  zomato: "https://mir-s3-cdn-cf.behance.net/projects/404/eb01c3250727725.Y3JvcCw4OTYsNzAxLDAsMTg0.png" as string | null,
+  companylens: null as string | null,
+  clarity: null as string | null,
+  lexai: null as string | null,
   flowwise: null as string | null,
-  orbitResume: "https://raw.githubusercontent.com/Anubhx/portfolio-nextjs/master/public/images/OrbitResume.jpg" as string | null,
-  kuberAi: "https://raw.githubusercontent.com/Anubhx/portfolio-nextjs/master/public/images/KuberAI.jpg" as string | null,
-  languagetalk: "https://raw.githubusercontent.com/Anubhx/portfolio-nextjs/master/public/images/languageTalk.jpg" as string | null,
+  orbitResume: "https://github.com/Anubhx/Smart-ATS-Analyzer/raw/main/image01.png?raw=true" as string | null,
+  kuberAi: null as string | null,
+  languagetalk: "https://mir-s3-cdn-cf.behance.net/projects/404/language_talk.jpg" as string | null,
   airbnbClone: "https://github.com/Anubhx/AirBnB-Clone-using-React-Native-and-Expo-/blob/main/screenshots/PIC01.png?raw=true" as string | null,
+  employeePro: null as string | null,
   virtuStore: "https://mir-s3-cdn-cf.behance.net/projects/404/68fabb168030969.Y3JvcCw0MzIwLDMzNzksMCww.png" as string | null,
 } as const;
 
@@ -156,9 +143,15 @@ export const PROJECTS = [
     accentColor: THEME.accent,
     year: "2026",
     featured: true,
-    githubUrl: null,
-    liveUrl: null,
-    behanceUrl: "https://www.behance.net/gallery/250727725/Zomato-Group-Order",
+    actions: {
+      caseStudy: { enabled: true, href: "/work/zomato" },
+      live: { enabled: false, href: "" },
+      github: { enabled: false, href: "" },
+      behance: { enabled: true, href: "https://www.behance.net/gallery/250727725/Zomato-Group-Order" },
+      figma: { enabled: false, href: "" },
+      docs: { enabled: false, href: "" },
+      video: { enabled: false, href: "" },
+    } as Record<ProjectActionType, ProjectAction>,
   },
   {
     slug: "companylens",
@@ -172,9 +165,15 @@ export const PROJECTS = [
     accentColor: THEME.accent,
     year: "2024",
     featured: true,
-    githubUrl: null,
-    liveUrl: null,
-    behanceUrl: null,
+    actions: {
+      caseStudy: { enabled: true, href: "/work/companylens" },
+      live: { enabled: true, href: "https://companylensbyanubhav.vercel.app" },
+      github: { enabled: false, href: "" },
+      behance: { enabled: true, href: "https://www.behance.net/gallery/246636993/CompanyLens" },
+      figma: { enabled: false, href: "" },
+      docs: { enabled: false, href: "" },
+      video: { enabled: false, href: "" },
+    } as Record<ProjectActionType, ProjectAction>,
   },
   {
     slug: "clarity",
@@ -188,9 +187,15 @@ export const PROJECTS = [
     accentColor: THEME.accent,
     year: "2024",
     featured: true,
-    githubUrl: null,
-    liveUrl: null,
-    behanceUrl: null,
+    actions: {
+      caseStudy: { enabled: true, href: "/work/clarity" },
+      live: { enabled: true, href: "https://withclarity.vercel.app" },
+      github: { enabled: false, href: "" },
+      behance: { enabled: false, href: "" },
+      figma: { enabled: false, href: "" },
+      docs: { enabled: false, href: "" },
+      video: { enabled: false, href: "" },
+    } as Record<ProjectActionType, ProjectAction>,
   },
   {
     slug: "lexai",
@@ -204,9 +209,15 @@ export const PROJECTS = [
     accentColor: "#2d6a4f",
     year: "2024",
     featured: true,
-    githubUrl: null,
-    liveUrl: null,
-    behanceUrl: null,
+    actions: {
+      caseStudy: { enabled: true, href: "/work/lexai" },
+      live: { enabled: true, href: "https://lexaiapp.vercel.app" },
+      github: { enabled: false, href: "" },
+      behance: { enabled: true, href: "https://www.behance.net/gallery/246651851/Lex-AI" },
+      figma: { enabled: false, href: "" },
+      docs: { enabled: false, href: "" },
+      video: { enabled: false, href: "" },
+    } as Record<ProjectActionType, ProjectAction>,
   },
   {
     slug: "flowwise",
@@ -220,9 +231,15 @@ export const PROJECTS = [
     accentColor: "#7b5ea7",
     year: "2023",
     featured: true,
-    githubUrl: null,
-    liveUrl: null,
-    behanceUrl: null,
+    actions: {
+      caseStudy: { enabled: true, href: "/work/flowwise" },
+      live: { enabled: false, href: "" },
+      github: { enabled: true, href: "https://github.com/Anubhx/flow-wise" },
+      behance: { enabled: true, href: "https://www.behance.net/gallery/247562999/Flow-Wise-Case-Study" },
+      figma: { enabled: false, href: "" },
+      docs: { enabled: false, href: "" },
+      video: { enabled: false, href: "" },
+    } as Record<ProjectActionType, ProjectAction>,
   },
   {
     slug: "orbitresume",
@@ -236,9 +253,15 @@ export const PROJECTS = [
     accentColor: THEME.accent,
     year: "2024",
     featured: true,
-    githubUrl: "https://github.com/Anubhx/Smart-ATS-Analyzer",
-    liveUrl: "https://smart-ats-analyzer-by-anubhav.streamlit.app/",
-    behanceUrl: null,
+    actions: {
+      caseStudy: { enabled: true, href: "/work/orbitresume" },
+      live: { enabled: true, href: "https://orbitresume.vercel.app" },
+      github: { enabled: false, href: "" },
+      behance: { enabled: false, href: "" },
+      figma: { enabled: false, href: "" },
+      docs: { enabled: false, href: "" },
+      video: { enabled: false, href: "" },
+    } as Record<ProjectActionType, ProjectAction>,
   },
   {
     slug: "kuberai",
@@ -252,9 +275,15 @@ export const PROJECTS = [
     accentColor: THEME.accent,
     year: "2025",
     featured: true,
-    githubUrl: null,
-    liveUrl: null,
-    behanceUrl: null,
+    actions: {
+      caseStudy: { enabled: true, href: "/work/kuberai" },
+      live: { enabled: true, href: "https://kuberai.vercel.app" },
+      github: { enabled: false, href: "" },
+      behance: { enabled: false, href: "" },
+      figma: { enabled: false, href: "" },
+      docs: { enabled: false, href: "" },
+      video: { enabled: false, href: "" },
+    } as Record<ProjectActionType, ProjectAction>,
   },
   // Extra projects (NOT on homepage)
   {
@@ -269,26 +298,60 @@ export const PROJECTS = [
     accentColor: "#c97c2b",
     year: "2023",
     featured: false,
-    githubUrl: null,
-    liveUrl: null,
-    behanceUrl: "https://www.behance.net/gallery/167171313/Language-Talk-(-Language-learning-App-)-Case-Study",
+    actions: {
+      caseStudy: { enabled: false, href: "" },
+      live: { enabled: false, href: "" },
+      github: { enabled: false, href: "" },
+      behance: { enabled: true, href: "https://www.behance.net/gallery/167171313/Language-Talk-(-Language-learning-App-)-Case-Study" },
+      figma: { enabled: false, href: "" },
+      docs: { enabled: false, href: "" },
+      video: { enabled: false, href: "" },
+    } as Record<ProjectActionType, ProjectAction>,
   },
-  // {
-  //   slug: "airbnb-clone",
-  //   title: "AirBnB Clone",
-  //   type: "Mobile App · React Native",
-  //   description: "Full AirBnB clone with Clerk auth, OAuth, and mapping.",
-  //   image: IMAGES.airbnbClone,
-  //   stack: ["React Native", "Expo", "TypeScript", "Clerk"],
-  //   highlights: [],
-  //   role: "Mobile Engineer",
-  //   accentColor: "#e63946",
-  //   year: "2024",
-  //   featured: false,
-  //   githubUrl: "https://github.com/Anubhx/AirBnB-Clone-using-React-Native-and-Expo-",
-  //   liveUrl: null,
-  //   behanceUrl: null,
-  // },
+  {
+    slug: "airbnb-clone",
+    title: "AirBnB Clone",
+    type: "Mobile App · React Native",
+    description: "Full AirBnB clone with Clerk auth, OAuth, and mapping.",
+    image: IMAGES.airbnbClone,
+    stack: ["React Native", "Expo", "TypeScript", "Clerk"],
+    highlights: [],
+    role: "Mobile Engineer",
+    accentColor: "#e63946",
+    year: "2024",
+    featured: false,
+    actions: {
+      caseStudy: { enabled: false, href: "" },
+      live: { enabled: false, href: "" },
+      github: { enabled: true, href: "https://github.com/Anubhx/AirBnB-Clone-using-React-Native-and-Expo-" },
+      behance: { enabled: false, href: "" },
+      figma: { enabled: false, href: "" },
+      docs: { enabled: false, href: "" },
+      video: { enabled: false, href: "" },
+    } as Record<ProjectActionType, ProjectAction>,
+  },
+  {
+    slug: "querion",
+    title: "Querion",
+    type: "Full Stack Application",
+    description: "A dynamic query system.",
+    image: null,
+    stack: ["Next.js", "React"],
+    highlights: [],
+    role: "Full Stack Engineer",
+    accentColor: THEME.accent,
+    year: "2024",
+    featured: false,
+    actions: {
+      caseStudy: { enabled: false, href: "" },
+      live: { enabled: true, href: "https://querion-by-anubhav.vercel.app" },
+      github: { enabled: false, href: "" },
+      behance: { enabled: false, href: "" },
+      figma: { enabled: false, href: "" },
+      docs: { enabled: false, href: "" },
+      video: { enabled: false, href: "" },
+    } as Record<ProjectActionType, ProjectAction>,
+  }
 ] as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -342,7 +405,7 @@ export const EDUCATION = [
 // ─────────────────────────────────────────────────────────────────────────────
 // 9. SKILLS ECOSYSTEM
 // ─────────────────────────────────────────────────────────────────────────────
-export const SKILL_CLUSTERS: Array<{ name: string; iconPath: string; skills: string[] }> = []; // Kept empty or un-rendered for the editorial homepage.
+export const SKILL_CLUSTERS: Array<{ name: string; iconPath: string; skills: string[] }> = [];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 10. PROCESS STEPS
@@ -382,9 +445,7 @@ export const projects = PROJECTS.map((p) => ({
   accentColor: p.accentColor,
   year: p.year,
   featured: p.featured,
-  liveUrl: p.liveUrl,
-  githubUrl: p.githubUrl,
-  behanceUrl: p.behanceUrl,
+  actions: p.actions,
 }));
 
 export function getProjectBySlug(slug: string) {

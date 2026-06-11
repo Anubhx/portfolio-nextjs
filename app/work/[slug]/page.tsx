@@ -3,9 +3,10 @@ import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import fs from "fs";
 import path from "path";
-import CaseStudyContent from "@/components/CaseStudyContent";
 import Link from "next/link";
 import { Metadata } from "next";
+import ProjectActions from "@/components/ProjectActions";
+import CaseStudyContent from "@/components/CaseStudyContent";
 
 export async function generateStaticParams() {
   return projects.map((p) => ({
@@ -68,13 +69,20 @@ export default async function WorkPage({ params }: { params: Promise<{ slug: str
         </div>
 
         {/* Header Block */}
-        <header className="container max-w-4xl mt-24 mb-16">
-          <div className="flex flex-col gap-6 text-center">
+        <header className="container max-w-4xl mt-24 mb-16 flex flex-col items-center">
+          <div className="flex flex-col gap-6 text-center w-full">
             <span className="editorial-meta">{project.type}</span>
             <h1 className="editorial-heading">{project.title}</h1>
             <p className="editorial-body mx-auto text-xl">{project.description}</p>
           </div>
+          
+          <div className="mt-12 w-full flex justify-center">
+            <ProjectActions slug={project.slug} actions={project.actions} />
+          </div>
         </header>
+
+        {/* Sticky Action Bar */}
+        <ProjectActions slug={project.slug} actions={project.actions} variant="compact" isSticky={true} />
 
         {/* MDX Body */}
         <div className="container max-w-3xl">
@@ -86,8 +94,8 @@ export default async function WorkPage({ params }: { params: Promise<{ slug: str
             <Link href="/#work" className="nav-link">
               &larr; Back to index
             </Link>
-            {project.liveUrl && (
-              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="nav-link">
+            {project.actions.live?.enabled && project.actions.live.href && (
+              <a href={project.actions.live.href} target="_blank" rel="noopener noreferrer" className="nav-link">
                 View Live Prototype &rarr;
               </a>
             )}

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { projects } from "@/lib/constants";
 import { fadeUpVariants, staggerContainer } from "@/lib/tokens";
 import Link from "next/link";
+import ProjectActions from "./ProjectActions";
 
 export default function SelectedWork() {
   const featured = projects.filter((p) => p.featured);
@@ -42,6 +43,10 @@ export default function SelectedWork() {
               <p className="font-sans text-secondary text-xl md:text-2xl max-w-2xl leading-relaxed text-left md:text-right">
                 {project.description}
               </p>
+            </div>
+            
+            <div className="flex md:justify-end">
+              <ProjectActions slug={project.slug} actions={project.actions} />
             </div>
           </motion.div>
         ))}
