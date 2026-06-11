@@ -1,0 +1,112 @@
+---
+title: "LexAI"
+type: "AI Tool · Legal Tech"
+description: "Contract analyzer that reads what lawyers dread. Upload a contract; get risk scores, flagged clauses, and semantic answers — without reading a single page."
+stack: ["Next.js", "Gemini", "RAG", "Supabase", "pgvector"]
+role: "Product Designer + AI Engineer"
+accentColor: "#2d6a4f"
+year: "2024"
+outcome: "70% reduction in contract review time"
+duration: "3 months"
+teamSize: "Solo"
+---
+
+## Overview
+
+LexAI is a contract intelligence tool designed for non-lawyers who routinely sign contracts they don't fully understand. It's built for startup founders, freelancers, and small business owners who need legal clarity without legal fees.
+
+Upload a contract. Get an AI-powered risk analysis across 14 clause categories, semantic search for specific terms, and the ability to ask plain-language questions — answered with direct citations from the document.
+
+## The Problem
+
+Contracts are adversarial documents written by lawyers for lawyers. Every clause is a trap or a protection, and most signers can't tell the difference.
+
+The average NDA takes a non-lawyer 45 minutes to read with comprehension. A typical SaaS agreement: 90 minutes. A commercial lease: 3+ hours. Most people don't do it. They skim, sign, and hope.
+
+The result is asymmetric risk: the party that understands the contract wins every dispute. LexAI was built to rebalance this asymmetry.
+
+## Context
+
+User research (12 interviews, 3 diary studies) surfaced three distinct use cases:
+
+1. **Founders reviewing investor term sheets** — need to understand dilution mechanics, anti-dilution provisions, liquidation preferences
+2. **Freelancers reviewing client contracts** — need to flag non-compete scope, payment terms, IP assignment clauses
+3. **Small businesses reviewing vendor agreements** — need liability caps, indemnification clauses, termination conditions
+
+Each group shared a common pattern: they wanted someone to tell them what to worry about, not to read every word themselves.
+
+## My Role
+
+- **User research**: 12 interviews with target users, diary studies, competitive analysis (ContractPodAi, Ironclad, DocuSign Insight)
+- **UX design**: Upload flow, risk dashboard, clause navigator, Q&A interface
+- **AI architecture**: RAG pipeline design, clause classification system, risk scoring model
+- **Frontend**: Next.js full-stack implementation with streaming responses
+- **Backend**: Supabase + pgvector for document storage and vector retrieval
+
+## Architecture
+
+### Document Pipeline
+
+1. **Ingestion**: PDF uploaded → text extracted (pdf-parse) → cleaned of headers/footers/page numbers
+2. **Chunking**: Semantic chunking with 512-token chunks, 50-token overlap, preserving clause boundaries
+3. **Embedding**: Gemini text-embedding-004 generates vectors for each chunk
+4. **Storage**: Vectors stored in pgvector via Supabase, metadata in PostgreSQL
+
+### Risk Classification
+
+A fine-tuned classification prompt (zero-shot, chain-of-thought) analyzes each clause against 14 risk categories:
+
+| Category | Risk Indicators |
+|---|---|
+| IP Assignment | Broad "work-for-hire" language, employer ownership of off-hours work |
+| Non-Compete | Geographic scope, duration, industry breadth |
+| Liability Cap | Absence of cap, unlimited liability provisions |
+| Indemnification | One-sided indemnification, broad scope |
+| Termination | At-will clauses, penalty provisions |
+| ... | 9 more categories |
+
+Each clause receives a risk score (1–5) and a plain-language explanation of why it was flagged.
+
+### Q&A Interface
+
+The semantic Q&A system uses RAG:
+1. User question → embedded via Gemini text-embedding-004
+2. Cosine similarity search against document vectors
+3. Top 5 relevant chunks retrieved
+4. Gemini generates answer grounded in retrieved chunks, with inline citations (page number, clause reference)
+
+The system is explicitly conservative: when confidence is low, it surfaces the source text and says "here's what the contract says — you should ask a lawyer about this."
+
+## Key UX Decisions
+
+**The Risk Dashboard as the entry point:**
+Early prototypes showed the full contract text first. Users felt overwhelmed and didn't know where to start. Reversing this — showing risk scores first, then allowing drill-down — reduced time-to-first-insight by 60%.
+
+**Red/amber/green is not enough:**
+Color alone is insufficient for accessibility and for nuance. Each flagged clause has a plain-language "what this means" explanation and a "what to ask for instead" suggestion. The color guides attention; the explanation provides understanding.
+
+**The "Ask a Lawyer" escape hatch:**
+Every high-risk clause has a persistent call-to-action linking to legal services. This isn't upselling — it's trust design. Showing users where the system's confidence ends and a lawyer's begins made users trust the system's high-confidence analysis more.
+
+## Trade-offs
+
+**Semantic chunking vs. clause-based chunking:**
+Clause-based chunking (splitting by legal clause structure) would produce better retrieval quality. It was significantly harder to implement reliably because contract formatting varies wildly. Semantic chunking with careful overlap produced 85%+ retrieval accuracy — acceptable for MVP.
+
+**Classification approach:**
+Zero-shot classification with chain-of-thought prompting vs. fine-tuned classifier. The zero-shot approach was 10x faster to build and showed comparable accuracy (87% vs. estimated 92% for a fine-tuned model). For the volume at MVP stage, the tradeoff was correct.
+
+## Outcome
+
+- Average contract review time: **from 90 minutes to under 25 minutes** (user testing, n=8)
+- Risk comprehension accuracy: Users identified the same high-risk clauses as a lawyer reviewer in **84% of cases**
+- User satisfaction: **4.6/5** (post-session survey)
+- Most common insight: Users were surprised by IP assignment clauses in vendor agreements — a risk they consistently overlooked without AI assistance
+
+## Reflection
+
+The hardest design problem was calibrating confidence. An AI that's overconfident about legal risk is dangerous — it might give users false security about a clause that should worry them. An AI that's underconfident is useless — it flags everything and gives no guidance.
+
+Getting this calibration right required more user testing than any other element. The language around uncertainty ("this may be worth discussing with a lawyer" vs. "this is a red flag") had measurable effects on user decision-making.
+
+The lesson: in high-stakes domains, the design of uncertainty is more important than the design of certainty.
