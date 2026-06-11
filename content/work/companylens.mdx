@@ -1,102 +1,42 @@
 ---
 title: "CompanyLens"
-type: "Agentic AI · B2B Platform"
-description: "Multi-agent due diligence automation that turns hours of analyst work into minutes."
-stack: ["LangGraph", "FastAPI", "Gemini", "ChromaDB", "Next.js"]
-role: "Product Designer + AI Engineer + Full-stack"
-accentColor: "#274C77"
-year: "2024"
-outcome: "Due diligence reports in under 90 seconds"
-duration: "4 months"
-teamSize: "Solo"
 ---
 
-## Overview
+## Why this mattered
 
-CompanyLens is a multi-agent intelligence platform designed for venture analysts and M&A teams. It automates the most time-consuming part of early-stage due diligence: reading and synthesizing hundreds of pages of documents to extract signal.
+Due diligence is an industry of brute force. Analysts spend hours digging through SEC filings, 10-Ks, and news reports, just to pull out a few salient risks and opportunities. The work is high stakes, but the process is profoundly uncreative. 
 
-The system deploys three specialized AI agents working in coordination — each responsible for a distinct phase of analysis — producing structured reports that would otherwise take a human analyst 3+ hours.
+CompanyLens mattered because it wasn't just about reading text faster—it was about orchestrating a workflow. If we could build a system that performed the initial heavy lifting of research, we could free analysts to do what humans actually do best: make judgment calls.
 
-## The Problem
+## What made it difficult
 
-Due diligence is broken by repetition. Every deal cycle, analysts repeat the same cognitive work: ingest documents, extract financials, identify risks, synthesize findings. The information exists. The insight is buried.
+Retrieving text is easy. Retrieving the *right* text in the right context is incredibly hard. 
 
-The problem is not intelligence — it's attention. Human analysts are expensive, fatigable, and inconsistent. The same 200-page document yields different risk flags depending on who reads it and when.
+Large Language Models have a notorious habit of hallucinating when summarizing massive financial documents. A simple RAG (Retrieval-Augmented Generation) pipeline wasn't enough. The system needed to know when a piece of retrieved information was contradicted by another document, and it needed to synthesize hundreds of pages without losing the nuance of risk factors.
 
-**The opportunity:** AI doesn't fatigue. It doesn't overlook page 187. It doesn't get faster at the second read, but it does stay just as thorough.
+## How I approached it
 
-## Context
+I moved away from a single-prompt architecture and designed a multi-agent system using LangGraph.
 
-The MVP was scoped for a venture fund that processes 40–60 company pitches per month. The workflow:
+1. **The Research Agent:** Responsible purely for searching the vector database (ChromaDB) and identifying relevant chunks of SEC filings.
+2. **The Analysis Agent:** Takes the retrieved chunks and acts as a skeptic. It cross-references the data and looks for contradictions or missing context.
+3. **The Report Agent:** Synthesizes the verified findings into a structured, executive-ready format.
 
-1. Analyst receives pitch deck, financial model, cap table, legal docs
-2. Analyst reads and annotates (3–6 hours per company)
-3. Analyst drafts investment memo for partner review
-4. Partners re-read source documents to verify
-
-Every step after the first one involves re-processing information that was already captured. CompanyLens was designed to own steps 1 through 3 — and produce a draft memo that partners can verify, not generate from scratch.
-
-## My Role
-
-Full ownership across:
-- **Product definition**: Problem framing, user stories, success criteria
-- **UX design**: Upload flow, agent status visualization, report layout, clause navigator
-- **AI architecture**: Three-agent system design using LangGraph
-- **Frontend**: Next.js dashboard, streaming response UI, PDF viewer integration
-- **Backend**: FastAPI orchestration layer, ChromaDB vector store management
-
-## Architecture
-
-The system uses a directed graph architecture via LangGraph, where each node is a specialized agent:
-
-### Agent 1: Research Agent
-Responsible for document ingestion and knowledge extraction. Takes raw PDFs, performs semantic chunking, generates embeddings via Gemini's text-embedding model, and stores vectors in ChromaDB. Also performs web research via search APIs to supplement uploaded documents with public information.
-
-### Agent 2: Analysis Agent
-Receives the knowledge base from the Research Agent. Executes structured analysis across 12 due diligence dimensions: market size, competitive moat, team composition, financial health, legal exposure, IP ownership, customer concentration, burn rate, cap table health, technology differentiation, regulatory risk, and ESG considerations.
-
-Each dimension produces a structured JSON output with a risk score (1–5), evidence snippets, and confidence level.
-
-### Agent 3: Report Agent
-Takes Analysis Agent outputs and generates a human-readable investment memo. Uses a structured prompt with the fund's existing memo template. Produces both an executive summary and a full report with cited evidence.
-
-### Streaming Architecture
-All agent outputs stream to the frontend via Server-Sent Events (SSE). The UI shows live progress through each agent phase, giving users visibility into the system's reasoning process — building trust through transparency.
-
-## Key Decisions
-
-**Why LangGraph over vanilla LLM calls?**
-LangGraph provides explicit state management and conditional routing. When the Analysis Agent identifies a high-risk legal flag, it can route back to the Research Agent to gather more evidence before proceeding. This reflexive behavior is impossible with linear prompt chains.
-
-**Why ChromaDB over pgvector for MVP?**
-Speed of iteration. ChromaDB runs locally with zero infrastructure setup, making the feedback loop during development instant. The tradeoff: no SQL joins, harder to query across collections. For production, a migration path to pgvector was documented and tested.
-
-**Why Gemini over GPT-4 for this use case?**
-Context window size. Due diligence documents often exceed 100K tokens. Gemini 1.5 Pro's 1M token context meant we could process entire data rooms without chunking strategies that introduce retrieval errors. The tradeoff: GPT-4 produced slightly better structured output, but not enough to justify the context limitations.
-
-**Streaming UI decision:**
-Early prototypes showed full report generation in one batch. User testing revealed anxiety: participants didn't trust a system that went silent for 90 seconds. The streaming UI showing agent progress dramatically improved perceived reliability and trust scores in testing.
+This wasn't just an engineering choice—it was a UX choice. By separating the concerns, the system became significantly more reliable, and we could expose the "thinking" steps to the user, building trust in the final output.
 
 ## Trade-offs
 
-| Decision | Chose | Tradeoff |
-|---|---|---|
-| Vector DB | ChromaDB (MVP) | Faster dev, harder to scale |
-| LLM Provider | Gemini | Large context, weaker JSON formatting |
-| Chunking | Semantic | Slower ingestion, better retrieval |
-| Architecture | LangGraph | Steeper setup, much better control flow |
+I chose to prioritize accuracy over speed. 
 
-## Outcome
+Generating a full diligence report takes about 90 seconds. In the age of instant chat interfaces, 90 seconds feels like an eternity. But in the context of due diligence, 90 seconds to replace 3 hours of manual reading is a miracle. To bridge the UX gap, I implemented streaming responses so the user could watch the agents "think" and compile the report in real-time, transforming a loading state into a moment of engagement.
 
-- Due diligence report generation: **90 seconds** vs. 3+ hours manually
-- Analyst time saved per company: **~4 hours**
-- Accuracy validation: Report conclusions matched human analyst conclusions in **89% of test cases**
-- User trust score (5-point scale): **4.2/5** after streaming UI was introduced (up from 2.8/5 with batch output)
+## Artifacts
+
+![Agent Architecture Diagram](/images/placeholder-diagram.jpg)
+*An early whiteboard sketch mapping out the multi-agent orchestration.*
 
 ## Reflection
 
-The biggest learning was about trust, not technology. The AI was accurate from the start. Users didn't believe it was accurate until they could watch it work.
+CompanyLens taught me that the UI of AI is rarely a chat box. The real interface of AI is workflow. 
 
-The streaming UI was the highest-leverage design decision in the entire project — not because it made the system faster, but because it made the system legible. Users who saw the agent reasoning in real time asked better follow-up questions and trusted the output more.
-
-If I were starting over: I would prototype the trust-building interaction first, before the AI pipeline. The technology wasn't the hard part. Designing for believable intelligence was.
+Users don't want to chat with their documents; they want their documents to do work for them. Designing an intelligent system means designing the choreography of tasks, not just the prompts.

@@ -34,22 +34,24 @@ export const tokens = {
 
 // Framer Motion variants for scroll-triggered animations
 export const fadeUpVariants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 10 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.65,
+      duration: 1.2,
       ease: "easeOut" as const,
     },
   },
 };
 
 export const staggerContainer = {
-  hidden: {},
+  hidden: { opacity: 0 },
   visible: {
+    opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
     },
   },
 };

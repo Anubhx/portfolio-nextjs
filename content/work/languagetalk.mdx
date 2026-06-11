@@ -1,142 +1,40 @@
 ---
 title: "LanguageTalk"
-type: "UX Design · EdTech"
-description: "Learning a language shouldn't feel like studying. A conversational AI experience designed around the psychology of habit and natural recall."
-stack: ["UX Research", "IA", "Figma", "Prototyping"]
-role: "Lead UX Designer + Researcher"
-accentColor: "#c97c2b"
-year: "2023"
-outcome: "60+ screen high-fidelity prototype, full IA redesign"
-duration: "3 months"
-teamSize: "Solo researcher and designer"
 ---
 
-## Overview
+## Why this mattered
 
-LanguageTalk is a language learning platform redesign focused on one core problem: traditional language apps optimize for completion, not acquisition. Users finish lessons. They don't learn the language.
+Most language learning apps are designed like video games. They optimize for daily streaks and gamified dopamine hits, rather than actual conversational fluency. Users can spend 300 days on an app and still freeze when a barista asks for their order in a foreign language.
 
-This was a UX research and design project — no engineering implementation. The deliverable was a research report, information architecture overhaul, and a 60+ screen high-fidelity Figma prototype with motion specifications.
+LanguageTalk mattered because it treated language as a social utility, not a puzzle to be solved. The goal was to design an experience around the psychology of habit and natural conversational recall.
 
-## The Problem
+## What made it difficult
 
-Language learning apps are optimized for streaks, not fluency. The dominant design pattern (Duolingo pioneered it, everyone copied it) uses gamification to drive daily engagement. The problem: daily engagement and language acquisition are correlated, but not the same thing.
+You can't fake fluency. 
 
-Users maintain streaks. They don't speak the language.
+The hardest part of this project was entirely human: understanding why people abandon language learning. Through 12 in-depth user interviews and diary studies, the pattern became clear. People quit because the learning didn't transfer to their real lives. The interface challenge was creating a system that felt like a safe sandbox for conversation, without feeling like a rigid classroom.
 
-The specific failure: most apps teach recognition (you see the word, you pick the right translation) rather than recall (you think of the word, you produce it). Recognition is easy to gamify. Recall is how language actually works.
+## How I approached it
 
-**The research question:** What if we redesigned the core loop around recall, conversation, and the psychology of spaced repetition — instead of streak maintenance?
+I threw away the "skill tree" paradigm completely.
 
-## Research
+Instead, the information architecture was redesigned around a "conversational loop." Users are dropped into low-stakes, AI-driven scenarios (ordering a coffee, asking for directions, negotiating a price at a market). 
 
-### Phase 1: User Interviews (12 participants)
+I built a high-fidelity prototype in Figma (over 60 screens) that mapped out the exact micro-interactions of speaking, failing, and receiving immediate, gentle corrections from the AI. The UI was deliberately stripped back—massive typography, clear audio waveforms, and zero distracting gamification badges. The focus was entirely on the voice and the text.
 
-Recruited language learners at three stages: beginner (0–3 months), intermediate (6–18 months), advanced (18+ months). Criteria: currently using or recently abandoned a language learning app.
+## Trade-offs
 
-**Key findings:**
+I sacrificed short-term engagement metrics for long-term retention potential.
 
-**On motivation:** Users start with instrumental goals ("I want to speak to my partner's family"), switch to completion goals within 30 days ("I want to finish the course"), and abandon apps when completion becomes meaningless.
+Gamification works really well to get users to open an app for 3 minutes a day. By removing leaderboards and streaks, the app felt "quieter" and demanded more cognitive effort from the user. It was a risky UX trade-off, but the hypothesis was that users would stay longer if they actually felt themselves becoming fluent, rather than just chasing a high score.
 
-**On confidence:** The highest drop-off point was the first real conversation attempt — when users discovered their app-acquired knowledge didn't transfer to real speech.
+## Artifacts
 
-**On recall:** 9 of 12 participants described being unable to produce words in conversation that they could recognize in exercises. This is the recognition-recall gap.
-
-**On context:** Users learned vocabulary in isolation (the word "restaurant") but couldn't use it in context ("Can I have a table for two?"). Vocabulary without context doesn't transfer.
-
-### Phase 2: Diary Studies (5 participants, 2 weeks)
-
-Participants logged their study sessions and any real-world language encounters daily.
-
-**Key findings:**
-
-- Average study session: 4.2 minutes (far below the app's recommended 15–20 minutes)
-- Sessions happening during commute (58%) and before bed (31%)
-- Real-world encounters reported: 1.3 per participant per week — almost all passive (overhearing conversation)
-- Zero participants reported initiating a conversation during the 2 weeks
-
-### Phase 3: Competitive Analysis
-
-Analyzed 7 apps: Duolingo, Babbel, Rosetta Stone, Pimsleur, HelloTalk, Tandem, Speechling.
-
-**Gap identified:** None of the apps integrated conversational AI with spaced repetition. Apps either offered structured lessons (Duolingo, Babbel) or conversation practice (HelloTalk, Tandem). No app bridged the two.
-
-## Information Architecture Redesign
-
-The original app had 4 tabs: Learn, Practice, Stories, Profile. The information architecture had several problems:
-
-1. "Learn" and "Practice" were conceptually indistinct to users
-2. "Stories" (reading comprehension) was the most valuable feature and the least discoverable
-3. Profile contained progress data that users wanted on the home screen
-
-**New IA:**
-
-```
-Home (Daily Focus)
-├── Today's recall session (spaced repetition algorithm)
-├── Conversation prompt of the day
-└── Progress snapshot
-
-Conversations
-├── AI conversation partner (real-time, scenario-based)
-├── Conversation history with annotations
-└── Vocabulary extracted from conversations
-
-Learn
-├── Structured lessons (grammar, pronunciation)
-├── Stories and reading comprehension
-└── Culture and context cards
-
-Profile & Progress
-├── Fluency map (visual vocabulary network)
-├── Learning streaks (demoted from primary nav)
-└── Goals and settings
-```
-
-**Key IA decisions:**
-
-**Conversations as first-class navigation:** Conversation practice moved from a buried feature to a primary navigation item. This reflects the research insight: users want to speak the language, not complete lessons.
-
-**Streaks demoted:** Streak tracking moved from the home screen hero to a secondary progress metric. This was the most controversial decision. The rationale: streak prominence was reinforcing completion behavior at the expense of learning behavior.
-
-**Vocabulary network visualization:** Instead of a linear "words learned" counter, a visual network showing how vocabulary items connect to each other. Research showed this matched users' mental model of how language knowledge actually works — not a list, but a web.
-
-## The Conversation Experience
-
-The core interaction innovation was the AI conversation partner. Key design decisions:
-
-**Scenario-based, not topic-based:** Instead of "practice ordering food," the scenario is "You're running late to a restaurant where your in-laws are waiting. What do you say when you arrive?" Context creates recall. Topics don't.
-
-**Mistake handling:** When the user makes a grammar error, the AI responds naturally (correcting the error implicitly in its reply) and adds a subtle annotation. At the end of the conversation, errors are summarized with explanation. This mirrors how skilled human language tutors handle mistakes — correction without interruption.
-
-**Confidence calibration:** After each conversation, users rate their confidence (not their accuracy). This data feeds the spaced repetition algorithm: low confidence on a topic increases review frequency, regardless of whether the answers were technically correct.
-
-## Prototype
-
-The 60+ screen Figma prototype covers:
-
-- Onboarding (goal setting, level assessment, first conversation)
-- Home screen (daily focus, progress snapshot)
-- AI conversation flow (4 scenarios, error annotation system)
-- Spaced repetition session (new recall format)
-- Stories feature (redesigned with vocabulary extraction)
-- Profile and fluency map
-- Streak demotion (showing the new progress hierarchy)
-
-Motion specifications were documented for each transition: timing, easing, purpose.
-
-## Outcome
-
-- **Research insights**: 12 interviews, 5 diary studies, competitive analysis of 7 apps
-- **IA redesign**: Full navigation restructure based on research findings
-- **Prototype**: 60+ screens in Figma, all flows complete, motion specs documented
-- **Research finding validation**: Proposed conversation-first approach aligns with academic literature on recall vs. recognition in L2 acquisition
+![Journey Map](/images/placeholder-journey.jpg)
+*An early user journey map detailing the emotional highs and lows of attempting to speak a new language publicly.*
 
 ## Reflection
 
-This project challenged my intuitions about gamification. I came in skeptical of streaks and completion mechanics — I left with more nuance.
+LanguageTalk was an exercise in restraint. 
 
-The research showed that streaks genuinely help with one thing: building the habit of opening the app. The problem isn't that streaks exist — it's that they became the measure of success instead of a mechanism for building the habit.
-
-The design lesson: don't eliminate the thing that's not working. Understand what it is working for, keep that function, and replace the dysfunction.
-
-Streaks keep users opening the app. That's valuable. They shouldn't make users feel like they've accomplished something when they've only opened the app. That's the only thing that needed to change.
+As a designer, the temptation is always to add—more colors, more animations, more reward screens. This project forced me to strip everything away until only the core utility remained. It taught me that sometimes the best user experience is simply getting out of the user's way and letting them focus.

@@ -65,7 +65,7 @@ export function personSchema(): StructuredDataPerson {
       SOCIALS.linkedin,
       SOCIALS.github,
       SOCIALS.behance,
-    ].filter((s): s is string => !!s),
+    ].filter(Boolean) as string[],
     address: {
       "@type": "PostalAddress",
       addressLocality: "Bengaluru",

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Sora, Inter } from "next/font/google";
+import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -8,11 +8,12 @@ import JsonLd from "@/components/JsonLd";
 import { personSchema, websiteSchema } from "@/lib/structured-data";
 import { BIO } from "@/lib/constants";
 
-const sora = Sora({
+const playfair = Playfair_Display({
   subsets: ["latin"],
-  variable: "--font-sora",
+  variable: "--font-serif",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 const inter = Inter({
@@ -94,7 +95,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${sora.variable} ${inter.variable}`}>
+    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
       <body>
         <a href="#main-content" className="skip-link">
           Skip to main content

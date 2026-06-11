@@ -35,16 +35,16 @@
 //    accentDark → darker shade of accent (button hover)
 // ─────────────────────────────────────────────────────────────────────────────
 export const THEME = {
-  bg: "#f8f7f4",         // warm off-white — change to "#0f0f0f" for dark mode
-  text: "#161616",
-  secondary: "#5c5c5c",
-  accent: "#274c77",     // ← MAIN BRAND COLOR — try "#6d28d9" for purple
-  surface: "#ffffff",
-  border: "#e7e4df",
-  hover: "#eae6df",
-  accentLt: "#e8eff7",
-  accentMd: "#c2d4e8",
-  accentDark: "#1e3d62",
+  bg: "#FAFAFA",         // warm editorial off-white
+  text: "#111111",       // ink black
+  secondary: "#666666",
+  accent: "#111111",     // monotone, elegant accent
+  surface: "transparent",
+  border: "#EAEAEA",
+  hover: "#F2F2F2",
+  accentLt: "#F5F5F5",
+  accentMd: "#DDDDDD",
+  accentDark: "#000000",
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -54,15 +54,15 @@ export const BIO = {
   name: "Anubhav Raj",
   firstName: "Anubhav",
   initials: "AR",
-  title: "AI-native Product Builder",             // shown under name in contact, OG image
+  title: "Builder",             
   currentRole: "Software Engineer",
   currentCompany: "LTIMindtree",
   location: "Bengaluru, India",
   locationNote: "open to remote and hybrid opportunities",
-  email: "anubhavraj@example.com",               // ← UPDATE THIS with your real email
+  email: "anubhavraj@example.com",               
   resumeUrl:
     "https://drive.google.com/file/d/1J47dTPjIljQP8FI9GnqwGgtPRLZBjl86/view?usp=sharing",
-  availability: "Available for new opportunities", // shown in hero badge (set null to hide)
+  availability: null, // Removed for an editorial feel
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -87,29 +87,21 @@ export const SOCIALS = {
 // ─────────────────────────────────────────────────────────────────────────────
 export const HERO = {
   headline: [
-    "Designing",
-    "intelligent",   // this word gets the accent color
-    "products",
-    "where UX meets",
-    "engineering",
-    "and agentic AI.",
+    "I build products",
+    "for the messy space",
+    "between people",
+    "and systems."
   ],
-  // Simpler: just set heroHeadlineRaw if you prefer one string approach
-  heroHeadlineRaw: null as string | null, // if set, overrides the array above
+  heroHeadlineRaw: null as string | null, 
 
-  sub: "I transform ambiguity into products people trust and teams can ship. From a blank Figma canvas to a deployed, agentic system — I own the entire lifecycle.",
+  sub: "Somewhere between wireframes, APIs, and LLMs, I found my work. I exist in the tension of disciplines, removing the translation layer so teams can ship what matters.",
 
-  cta1Label: "View Work",
-  cta1Href: "#work",
-  cta2Label: "Let's Talk",
-  cta2Href: "#contact",
+  cta1Label: "Read the story",
+  cta1Href: "/about",
+  cta2Label: "View work",
+  cta2Href: "#work",
 
-  stats: [
-    { value: "3+", label: "Years of craft" },
-    { value: "4",  label: "AI products shipped" },
-    { value: "Full", label: "Stack ownership" },
-    { value: "0",  label: "Handoff gaps" },
-  ],
+  stats: [], // Removed for editorial feel
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -612,6 +604,9 @@ export const projects = PROJECTS.map((p) => ({
   accentColor: p.accentColor,
   year: p.year,
   featured: p.featured,
+  liveUrl: p.liveUrl,
+  githubUrl: p.githubUrl,
+  behanceUrl: p.behanceUrl,
 }));
 
 export function getProjectBySlug(slug: string) {

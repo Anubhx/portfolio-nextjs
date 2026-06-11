@@ -1,74 +1,109 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { fadeUpVariants, staggerContainer } from "@/lib/tokens";
+
 interface CaseStudyContentProps {
-  content: string;
+  children: React.ReactNode;
 }
 
-// Simple markdown-to-HTML converter for MDX content
-// In production, this uses next-mdx-remote for full MDX support
-function renderMarkdown(content: string): string {
-  let html = content
-    // Headers
-    .replace(/^### (.+)$/gm, "<h3>$1</h3>")
-    .replace(/^## (.+)$/gm, "<h2>$1</h2>")
-    .replace(/^# (.+)$/gm, "<h1>$1</h1>")
-    // Bold
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    // Italic
-    .replace(/\*(.+?)\*/g, "<em>$1</em>")
-    // Code inline
-    .replace(/`(.+?)`/g, "<code>$1</code>")
-    // Code blocks
-    .replace(/```[\w]*\n([\s\S]*?)```/g, "<pre>$1</pre>")
-    // Blockquote
-    .replace(/^> (.+)$/gm, "<blockquote>$1</blockquote>")
-    // HR
-    .replace(/^---$/gm, "<hr />")
-    // Table headers (simple)
-    .replace(
-      /\|(.+)\|\n\|[-| ]+\|\n((?:\|.+\|\n?)+)/g,
-      (_, header, rows) => {
-        const headerCells = header
-          .split("|")
-          .filter(Boolean)
-          .map((h: string) => `<th>${h.trim()}</th>`)
-          .join("");
-        const bodyRows = rows
-          .trim()
-          .split("\n")
-          .map((row: string) => {
-            const cells = row
-              .split("|")
-              .filter(Boolean)
-              .map((c: string) => `<td>${c.trim()}</td>`)
-              .join("");
-            return `<tr>${cells}</tr>`;
-          })
-          .join("");
-        return `<table><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table>`;
-      }
-    )
-    // Unordered lists
-    .replace(/^- (.+)$/gm, "<li>$1</li>")
-    .replace(/(<li>.*<\/li>\n?)+/g, (match) => `<ul>${match}</ul>`)
-    // Paragraphs (lines not starting with HTML tags)
-    .replace(/^(?!<[a-z]|\s)(.+)$/gm, "<p>$1</p>")
-    // Clean up
-    .replace(/\n{3,}/g, "\n\n");
-
-  return html;
-}
-
-export default function CaseStudyContent({ content }: CaseStudyContentProps) {
-  const html = renderMarkdown(content);
-
+export default function CaseStudyContent({ children }: CaseStudyContentProps) {
   return (
-    <div
-      className="prose-custom case-study-body-content"
-      dangerouslySetInnerHTML={{ __html: html }}
-      style={{
-        "--table-border": "1px solid var(--border)",
-      } as React.CSSProperties}
-    />
+    <motion.div
+      variants={staggerContainer}
+      initial="hidden"
+      animate="visible"
+      className="mdx-editorial-content"
+    >
+      <style jsx global>{`
+        .mdx-editorial-content {
+          font-family: var(--font-inter);
+          color: var(--secondary);
+          line-height: 1.8;
+          font-size: 1.125rem;
+          max-w: 65ch;
+          margin: 0 auto;
+        }
+        
+        .mdx-editorial-content h1, 
+        .mdx-editorial-content h2, 
+        .mdx-editorial-content h3 {
+          font-family: var(--font-serif);
+          color: var(--text);
+          font-weight: normal;
+          margin-top: 4rem;
+          margin-bottom: 1.5rem;
+          letter-spacing: -0.02em;
+        }
+
+        .mdx-editorial-content h2 {
+          font-size: 2.5rem;
+          border-top: 1px solid var(--border);
+          padding-top: 2rem;
+        }
+
+        .mdx-editorial-content p {
+          margin-bottom: 2rem;
+        }
+
+        /* Drop cap for first paragraph */
+        .mdx-editorial-content > p:first-of-type::first-letter {
+          font-family: var(--font-serif);
+          float: left;
+          font-size: 5rem;
+          line-height: 0.8;
+          padding-top: 0.15em;
+          padding-right: 0.1em;
+          padding-left: 0.05em;
+          color: var(--text);
+        }
+
+        .mdx-editorial-content ul {
+          margin-bottom: 2rem;
+          list-style-type: none;
+          padding-left: 0;
+        }
+
+        .mdx-editorial-content li {
+          margin-bottom: 0.5rem;
+          position: relative;
+          padding-left: 1.5rem;
+        }
+
+        .mdx-editorial-content li::before {
+          content: "—";
+          position: absolute;
+          left: 0;
+          color: var(--text);
+        }
+
+        .mdx-editorial-content blockquote {
+          font-family: var(--font-serif);
+          font-size: 1.5rem;
+          line-height: 1.4;
+          color: var(--text);
+          margin: 4rem -2rem;
+          padding: 0 2rem;
+          border-left: 2px solid var(--text);
+        }
+
+        .mdx-editorial-content img {
+          width: 100%;
+          height: auto;
+          margin: 4rem 0;
+          background: #f4f4f4;
+        }
+
+        @media (max-width: 768px) {
+          .mdx-editorial-content blockquote {
+            margin: 3rem 0;
+            padding: 0 1rem;
+          }
+        }
+      `}</style>
+      <motion.div variants={fadeUpVariants}>
+        {children}
+      </motion.div>
+    </motion.div>
   );
 }

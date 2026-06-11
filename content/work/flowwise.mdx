@@ -1,125 +1,40 @@
 ---
 title: "FlowWise"
-type: "Mobile App · FinTech"
-description: "AI personal finance companion. Tracks spending, learns patterns, and nudges towards better decisions — before you make a bad one."
-stack: ["React Native", "Expo", "Figma", "SQLite", "Gemini"]
-role: "Product Designer + Mobile Engineer"
-accentColor: "#7b5ea7"
-year: "2023"
-outcome: "Full design system: 40+ components, 3 themes, App Store ready"
-duration: "5 months"
-teamSize: "Solo"
 ---
 
-## Overview
+## Why this mattered
 
-FlowWise is an AI-powered personal finance companion for mobile, designed around a core insight: most personal finance apps show you what happened. FlowWise was built to tell you what's about to happen — and intervene before the bad decision.
+Most personal finance apps are deeply depressing to use. They are essentially historical ledgers—they tell you what you did wrong after you've already done it. 
 
-The app tracks spending automatically, learns user patterns, and surfaces predictive nudges at decision moments: "You usually overspend on food delivery on Friday evenings. You've already spent 80% of your weekly budget."
+FlowWise mattered because I wanted to build an app that looked forward, not backward. It needed to be a companion that understood your financial habits and nudged you before you made a bad decision, rather than just showing you a red chart at the end of the month.
 
-## The Problem
+## What made it difficult
 
-Personal finance apps have a data problem disguised as a motivation problem. Users open Mint or YNAB, feel anxious, close the app. The data is accurate. The experience is punishing.
+Finance apps demand absolute precision, but human behavior is entirely irrational.
 
-The failure mode is timing. Most apps deliver financial feedback in retrospect — at month-end, when nothing can be changed. By the time you see "you overspent on dining by $300," the damage is done.
+The technical challenge was building a system robust enough to securely handle SQLite transactions locally on the device (for extreme privacy), while pushing anonymized habit data to Gemini to generate personalized, behavioral nudges. The design challenge was making a financial app feel lightweight and encouraging rather than punitive.
 
-The opportunity: intercept decisions before they become regrets. Not financial advice. Financial awareness at the moment of choice.
+## How I approached it
 
-## Context
+I started in Figma, not with code. I built a full design system consisting of 40+ components, ensuring the app felt native and fluid.
 
-Target user research (8 interviews, 2-week diary studies with n=5):
+I focused heavily on micro-interactions. When you categorize an expense, it doesn't just snap into place; it glides. When a nudge arrives, it doesn't look like a warning banner; it looks like a quiet suggestion from a friend. 
 
-- 25–35, some financial literacy, irregular income patterns (freelancers, early-career professionals)
-- Pain point: not ignorance of spending habits, but inability to act on that knowledge in the moment
-- Mental model: "I know I spend too much on coffee. I just don't know it when I'm ordering coffee."
-- Existing app behavior: open on payday, don't return until next payday
+Technically, I built it using React Native and Expo, keeping the primary database offline-first. The AI layer acts asynchronously, analyzing spending velocity—for instance, if you are spending your "Dining Out" budget 30% faster than usual, it generates a gentle, context-aware notification before the weekend hits.
 
-The core design challenge: make financial awareness ambient, not anxious.
+## Trade-offs
 
-## My Role
+I sacrificed cloud-sync convenience for local-first privacy. 
 
-- **User research**: Interviews, diary studies, behavioral pattern analysis
-- **Product definition**: Scope, feature prioritization, success metrics
-- **Design system**: 40+ components, 3 color themes, motion specifications
-- **UX design**: All flows — onboarding, dashboard, transaction log, AI nudge system, settings
-- **Mobile engineering**: React Native + Expo full implementation
-- **AI integration**: Gemini-powered pattern analysis and nudge generation
+Because financial data is so sensitive, I decided early on that the primary database would live on the user's phone. This meant giving up easy multi-device syncing, but it allowed me to guarantee privacy and achieve instantaneous load times. The UI never waits for a network request to render your balance.
 
-## Design System
+## Artifacts
 
-The design system was built before any screen was designed. This was a deliberate inversion of the usual mobile design workflow.
-
-**Foundations:**
-- **Typography**: Custom type scale with fluid sizes for 3 screen size breakpoints
-- **Color**: 3 themes (Default, Dark, High Contrast for accessibility)
-- **Spacing**: 8px base grid, consistent through every component
-- **Motion**: Three-tier animation system (Instant: <100ms, Fast: 100–200ms, Smooth: 200–400ms)
-
-**Component library (40+ components):**
-- Transaction cells (standard, grouped, pending, recurring)
-- Category badges with custom iconography
-- Spending ring charts (animated, accessible)
-- AI nudge cards (4 severity levels)
-- Bottom sheet modals (gesture-driven)
-- Navigation tab bar with haptic feedback specs
-
-**Why the system-first approach?**
-Because in mobile design, visual consistency isn't just aesthetic — it's cognitive load management. Every inconsistency in spacing or color asks the user's brain to work harder. The system guarantees consistency by making inconsistency impossible.
-
-## Key UX Decisions
-
-**The nudge system design:**
-The hardest problem was when and how to deliver AI insights without creating anxiety. Three design principles guided every nudge:
-
-1. **Positive framing**: "You're 3 days from hitting your dining budget" vs. "You've spent 70% of your dining budget"
-2. **Actionability**: Every nudge includes a suggested action, not just information
-3. **Opt-out prominence**: Users can dismiss any category from nudging permanently — not hidden in settings
-
-**Offline-first architecture:**
-All spending data lives in SQLite locally. The app works without internet. This was a deliberate trust decision: financial data should not depend on connectivity, and users who have connectivity concerns should have the same experience.
-
-**Gesture navigation:**
-Standard tab-based navigation was replaced with a gesture-first system. Swipe left/right to navigate between weeks. Swipe up on any transaction to see category context. Long-press to edit. This created a more fluid, less tap-intensive experience — but required extensive accessibility compensation via VoiceOver/TalkBack labels.
-
-**The AI Persona:**
-The nudge system's voice was designed as a knowledgeable friend, not a financial advisor. No jargon. No judgment. Simple observations with clear implications. The tone calibration was the most iterated element in the project — 6 rounds of copy testing.
-
-## Architecture
-
-```
-React Native (Expo) App
-├── Local State (Zustand)
-├── SQLite (expo-sqlite) — spending data, categories, budgets
-├── Gemini API — pattern analysis, nudge generation
-│   ├── Spending pattern analysis (weekly batch)
-│   └── Real-time nudge generation (triggered by transaction)
-└── Expo Notifications — nudge delivery
-```
-
-**AI Integration:**
-Gemini receives a structured prompt with:
-- 90-day spending history (anonymized category totals, not merchant names)
-- Current week's transactions
-- User-defined budget limits
-- Time of day and day of week
-
-Returns structured JSON: identified patterns, predicted risk, recommended nudge text, confidence score.
-
-**Privacy decision:**
-Merchant names are never sent to the AI. Only category codes and amounts. This reduces personalization quality but significantly reduces privacy risk — and made user research participants significantly more comfortable with the AI feature.
-
-## Outcome
-
-- App Store submission ready (TestFlight tested with 12 beta users)
-- Design system: 40+ components across 3 themes
-- User satisfaction: **4.4/5** in beta testing
-- Most impactful nudge category: Food delivery (83% of beta users found these nudges "useful" or "very useful")
-- Behavioral change reported: 7 of 12 beta users reported changing a spending decision after receiving a nudge
+![FlowWise Figma System](/images/placeholder-figma.jpg)
+*A slice of the 40+ component design system built before writing the first line of code.*
 
 ## Reflection
 
-The hardest lesson from FlowWise was about emotional design. Finance is inherently emotional — money is tied to security, identity, and aspiration. Design that treats it as a data problem misses this.
+FlowWise taught me the power of state transitions. 
 
-The best design decisions in this project weren't about information architecture or component consistency. They were about tone, framing, and the emotional state users would be in when they encountered the app.
-
-The nudge that said "you're ahead of your savings goal this month" was the highest-rated feature in beta testing. It wasn't technically complex. It was just true, delivered at the right moment, in the right voice. That's the whole job.
+In mobile apps, the space *between* screens is just as important as the screens themselves. Motion is context. By spending hours perfecting the gesture navigation and the feeling of entering a transaction, I learned that trust in software isn't just about security—it's about how solid and predictable the interface feels under your thumb.

@@ -1,131 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { BIO } from "@/lib/constants";
 
 export default function Nav() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const pathname = usePathname();
-
-  useEffect(() => {
-    function handleScroll() {
-      setScrolled(window.scrollY > 48);
-    }
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Close mobile menu on route change
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
-
-  // Close menu on Escape key
-  useEffect(() => {
-    function handleEscape(e: KeyboardEvent) {
-      if (e.key === "Escape") setMobileOpen(false);
-    }
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
-  }, []);
-
-  const isHome = pathname === "/";
-  const linkPrefix = isHome ? "" : "/";
-
-  function handleNavLinkClick() {
-    setMobileOpen(false);
-  }
-
   return (
-    <nav id="nav" className={scrolled ? "scrolled" : ""} role="navigation" aria-label="Primary navigation">
-      <div className="nav-inner">
-        <Link href="/" className="nav-logo" aria-label={`${BIO.name} — home`}>
+    <motion.header
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+      className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm py-8"
+    >
+      <div className="container flex justify-between items-center">
+        <Link href="/" className="font-serif text-xl tracking-tight hover:opacity-70 transition-opacity">
           {BIO.initials}
         </Link>
-
-        <ul className="nav-links" role="list">
-          <li>
-            <a href={isHome ? "#work" : "/#work"} onClick={handleNavLinkClick}>
-              Work
-            </a>
-          </li>
-          <li>
-            <a href={isHome ? "#process" : "/#process"} onClick={handleNavLinkClick}>
-              Process
-            </a>
-          </li>
-          <li>
-            <a href={isHome ? "#experience" : "/#experience"} onClick={handleNavLinkClick}>
-              Experience
-            </a>
-          </li>
-          <li>
-            <a href={isHome ? "#philosophy" : "/#philosophy"} onClick={handleNavLinkClick}>
-              Thinking
-            </a>
-          </li>
-        </ul>
-
-        <div className="nav-cta-wrap">
-          <a
-            href={isHome ? "#contact" : "/#contact"}
-            className="nav-cta"
-            onClick={handleNavLinkClick}
-          >
-            Let&apos;s talk
-          </a>
-        </div>
-
-        <button
-          className="nav-hamburger"
-          aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
-          aria-expanded={mobileOpen}
-          aria-controls="mobile-menu"
-          onClick={() => setMobileOpen((prev) => !prev)}
-        >
-          <span
-            style={{
-              transform: mobileOpen
-                ? "translateY(6.5px) rotate(45deg)"
-                : undefined,
-            }}
-          />
-          <span style={{ opacity: mobileOpen ? 0 : 1 }} />
-          <span
-            style={{
-              transform: mobileOpen
-                ? "translateY(-6.5px) rotate(-45deg)"
-                : undefined,
-            }}
-          />
-        </button>
+        <nav className="flex gap-8 md:gap-16">
+          <Link href="/#work" className="nav-link">Work</Link>
+          <Link href="/about" className="nav-link">About</Link>
+          <Link href="#contact" className="nav-link">Contact</Link>
+        </nav>
       </div>
-
-      <nav
-        id="mobile-menu"
-        className={`nav-mobile${mobileOpen ? " open" : ""}`}
-        aria-label="Mobile navigation"
-      >
-        <a href={isHome ? "#work" : "/#work"} onClick={handleNavLinkClick}>
-          Work
-        </a>
-        <a href={isHome ? "#process" : "/#process"} onClick={handleNavLinkClick}>
-          Process
-        </a>
-        <a href={isHome ? "#experience" : "/#experience"} onClick={handleNavLinkClick}>
-          Experience
-        </a>
-        <a href={isHome ? "#philosophy" : "/#philosophy"} onClick={handleNavLinkClick}>
-          Thinking
-        </a>
-        <a href={isHome ? "#contact" : "/#contact"} onClick={handleNavLinkClick}>
-          Let&apos;s talk →
-        </a>
-      </nav>
-    </nav>
+    </motion.header>
   );
 }
