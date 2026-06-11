@@ -128,7 +128,7 @@ export const IMAGES = {
   ecstasia: null as string | null,
 
   // ── Project screenshots ────────────────────────────────────────────────────
-  zomato: "https://mir-s3-cdn-cf.behance.net/projects/404/eb01c3250727725.Y3JvcCw4OTYsNzAxLDAsMTg0.png" as string | null,
+  zomato: "https://raw.githubusercontent.com/Anubhx/portfolio-nextjs/master/public/images/zomato.jpg" as string | null,
   companylens: null as string | null,
   clarity: null as string | null,
   lexai: null as string | null,
