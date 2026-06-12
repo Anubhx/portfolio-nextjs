@@ -121,7 +121,7 @@ export const IMAGES = {
     "https://raw.githubusercontent.com/Anubhx/portfolio-nextjs/master/public/images/clarity.jpg" as string | null,
   lexai:
     "https://raw.githubusercontent.com/Anubhx/portfolio-nextjs/master/public/images/lexAI.jpg" as string | null,
-  flowwise: null as string | null,
+  flowwise: "https://raw.githubusercontent.com/Anubhx/portfolio-nextjs/master/public/images/FlowWise.png" as string | null,
   orbitResume:
     "https://raw.githubusercontent.com/Anubhx/portfolio-nextjs/master/public/images/OrbitResume.jpg" as string | null,
   kuberAi:
@@ -182,11 +182,11 @@ export const PROJECTS = [
     timeline: "2024",
     accentColor: THEME.accent,
     year: "2024",
-    featured: true,
+    featured: false,
     actions: {
       caseStudy: { enabled: true, href: "/work/companylens" },
       live: { enabled: true, href: "https://companylensbyanubhav.vercel.app" },
-      github: { enabled: false, href: "" },
+      github: { enabled: true, href: "https://github.com/Anubhx/CompanyLens" },
       behance: { enabled: true, href: "https://www.behance.net/gallery/246636993/CompanyLens" },
       figma: { enabled: false, href: "" },
       docs: { enabled: false, href: "" },
@@ -235,7 +235,7 @@ export const PROJECTS = [
     timeline: "2023",
     accentColor: "#c97c2b",
     year: "2023",
-    featured: false,
+    featured: true,
     actions: {
       caseStudy: { enabled: false, href: "" },
       live: { enabled: false, href: "" },
