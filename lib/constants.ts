@@ -293,7 +293,7 @@ export const PROJECTS = [
     actions: {
       caseStudy: { enabled: true, href: "/work/lexai" },
       live: { enabled: true, href: "https://lexaiapp.vercel.app" },
-      github: { enabled: false, href: "" },
+      github: { enabled: true, href: "https://github.com/Anubhx/Lex-AI" },
       behance: { enabled: true, href: "https://www.behance.net/gallery/246651851/Lex-AI" },
       figma: { enabled: false, href: "" },
       docs: { enabled: false, href: "" },
@@ -319,7 +319,7 @@ export const PROJECTS = [
     actions: {
       caseStudy: { enabled: true, href: "/work/kuberai" },
       live: { enabled: true, href: "https://kuberai.vercel.app" },
-      github: { enabled: false, href: "" },
+      github: { enabled: true, href: "https://github.com/Anubhx/FinanceAgent" },
       behance: { enabled: false, href: "" },
       figma: { enabled: false, href: "" },
       docs: { enabled: false, href: "" },
@@ -372,7 +372,7 @@ export const PROJECTS = [
     actions: {
       caseStudy: { enabled: false, href: "" },
       live: { enabled: true, href: "https://querion-by-anubhav.vercel.app" },
-      github: { enabled: false, href: "" },
+      github: { enabled: true, href: "https://github.com/Anubhx/Querion" },
       behance: { enabled: false, href: "" },
       figma: { enabled: false, href: "" },
       docs: { enabled: false, href: "" },
