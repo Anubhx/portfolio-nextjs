@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contrast — Design Audit Tool</title>
+<meta name="description" content="Audit any website's design in 10 seconds. Free.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+:root{
+  --white:#ffffff;
+  --off:#FAFAF8;
+  --surf:#F4F3EF;
+  --surf2:#ECEAE4;
+  --brd:#E2E0D8;
+  --brd2:#C8C5BA;
+  --ink:#16150F;
+  --ink2:#4A4840;
+  --ink3:#8A8880;
+  --ink4:#B8B6AE;
+  --acc:#2D6A2D;
+  --acc-l:#F0F7F0;
+  --acc-m:#4A9E4A;
+  --ex:#1A7A42;
+  --ex-bg:#EBF5EE;
+  --gd:#8A5E00;
+  --gd-bg:#FEF7E6;
+  --wn:#CC4400;
+  --wn-bg:#FEF0EA;
+  --cr:#B31B1B;
+  --cr-bg:#FDEAEA;
+  --fd:'Instrument Serif',Georgia,serif;
+  --fs:'Inter',system-ui,sans-serif;
+  --fm:'JetBrains Mono',monospace;
+  --sh0:0 1px 2px rgba(16,15,10,.06);
+  --sh1:0 2px 8px rgba(16,15,10,.08),0 1px 2px rgba(16,15,10,.04);
+  --sh2:0 4px 20px rgba(16,15,10,.10),0 2px 6px rgba(16,15,10,.06);
+}
+
+body{background:#EDEDEA;color:var(--ink);font-family:var(--fs);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* SR only */
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Proto wrapper */
+.canvas{padding:56px 40px;min-height:100vh}
+.plabel{font-size:11px;font-family:var(--fm);letter-spacing:.08em;color:#8A8880;text-transform:uppercase;display:block;margin-bottom:12px}
+.screen{width:1440px;margin:0 auto 96px;border:1px solid var(--brd);border-radius:16px;overflow:hidden;box-shadow:var(--sh2);background:var(--white)}
+.pwrap{width:1440px;margin:0 auto 96px}
+
+/* Grid background */
+.gbg{position:absolute;inset:0;background-image:linear-gradient(var(--brd) 1px,transparent 1px),linear-gradient(90deg,var(--brd) 1px,transparent 1px);background-size:48px 48px;opacity:.3;pointer-events:none;z-index:0}
+.gfade{position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 50% -10%,rgba(255,255,255,0) 0%,rgba(255,255,255,.9) 55%,#fff 100%);pointer-events:none;z-index:1}
+.rel{position:relative;z-index:2}
+
+/* ── NAV ── */
+.nav{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;border-bottom:1px solid var(--brd);background:rgba(255,255,255,.92);backdrop-filter:blur(12px);position:relative;z-index:20}
+.logo{font-family:var(--fd);font-style:italic;font-size:20px;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
+.logo:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:2px}
+.nav-r{display:flex;align-items:center;gap:24px}
+.nav-a{font-size:13px;color:var(--ink2);text-decoration:none;transition:color .15s;display:inline-flex;align-items:center;gap:5px}
+.nav-a:hover{color:var(--ink)}
+.nav-a:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:2px}
+.nav-badge{font-size:11px;font-family:var(--fm);background:var(--surf);border:1px solid var(--brd);color:var(--ink3);padding:2px 9px;border-radius:20px}
+
+/* ── HERO ── */
+.hero{position:relative;padding:80px 40px 0;min-height:600px;overflow:hidden}
+.hero-content{max-width:640px;position:relative;z-index:3}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-family:var(--fm);color:var(--ink3);letter-spacing:.04em;background:var(--surf);border:1px solid var(--brd);padding:5px 13px;border-radius:20px;margin-bottom:28px}
+.eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--ex);display:inline-block;flex-shrink:0}
+.h1{font-size:54px;font-weight:600;letter-spacing:-.036em;line-height:1.08;color:var(--ink);margin-bottom:22px}
+.h1 em{font-family:var(--fd);font-style:italic;font-weight:400;color:var(--ink2)}
+.hero-p{font-size:16px;color:var(--ink2);line-height:1.65;max-width:480px;margin-bottom:32px}
+
+/* Input */
+.input-wrap{display:flex;align-items:center;max-width:540px;background:var(--white);border:1.5px solid var(--brd2);border-radius:10px;box-shadow:var(--sh1);overflow:hidden;transition:border-color .15s,box-shadow .15s;margin-bottom:16px}
+.input-wrap:focus-within{border-color:var(--acc);box-shadow:0 0 0 3px rgba(45,106,45,.14),var(--sh1)}
+.url-i{flex:1;border:none;outline:none;font-family:var(--fs);font-size:14px;color:var(--ink);background:transparent;padding:14px 16px;min-width:0}
+.url-i::placeholder{color:var(--ink4)}
+.audit-btn{background:var(--ink);color:#fff;border:none;font-family:var(--fs);font-size:13px;font-weight:600;padding:0 22px;height:46px;margin:4px;border-radius:7px;cursor:pointer;letter-spacing:.01em;white-space:nowrap;transition:background .15s,transform .1s;flex-shrink:0}
+.audit-btn:hover{background:#2A2920}
+.audit-btn:active{transform:scale(.98)}
+.audit-btn:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+.checks-row{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.ci{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink3)}
+.cdot{width:5px;height:5px;border-radius:50%;background:var(--acc-m);flex-shrink:0}
+
+.trusted{display:flex;align-items:center;gap:10px;margin-top:28px}
+.faces{display:flex}
+.face{width:28px;height:28px;border-radius:50%;border:2px solid #fff;margin-left:-8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff;flex-shrink:0}
+.face:first-child{margin-left:0}
+.trusted-t{font-size:12px;color:var(--ink3)}
+.trusted-t strong{color:var(--ink2);font-weight:500}
+
+/* Hero card preview */
+.hcard{position:absolute;right:40px;top:48px;width:580px;z-index:3;background:var(--white);border:1px solid var(--brd);border-radius:14px;box-shadow:var(--sh2);overflow:hidden}
+.hc-head{padding:20px 24px 16px;border-bottom:1px solid var(--brd);display:flex;align-items:flex-start;justify-content:space-between}
+.hc-domain{font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-.02em}
+.hc-meta{font-size:11px;font-family:var(--fm);color:var(--ink3);margin-top:3px}
+.hc-score-num{font-family:var(--fd);font-size:44px;font-weight:400;line-height:1;color:var(--gd);text-align:right}
+.hc-score-g{font-size:11px;font-family:var(--fm);color:var(--gd);letter-spacing:.06em;text-align:right;text-transform:uppercase}
+.hc-seg{display:flex;height:5px;gap:2px;margin:0 24px 0;border-radius:3px;overflow:hidden}
+.hc-seg-piece{height:100%;border-radius:2px}
+.hc-cats{display:grid;grid-template-columns:repeat(4,1fr)}
+.hc-cat{padding:14px 16px;border-right:1px solid var(--brd);border-top:1px solid var(--brd)}
+.hc-cat:last-child{border-right:none}
+.hc-clabel{font-size:10px;font-family:var(--fm);letter-spacing:.06em;color:var(--ink3);text-transform:uppercase;margin-bottom:6px}
+.hc-cscore{font-family:var(--fm);font-size:18px;font-weight:500;margin-bottom:4px}
+.hc-cbar{height:2px;background:var(--surf);border-radius:1px;overflow:hidden}
+.hc-cfill{height:100%;border-radius:1px}
+.hc-issues{padding:4px 24px 20px}
+.hc-ilabel{font-size:10px;font-family:var(--fm);letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px;margin-top:12px}
+.hc-irow{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--brd)}
+.hc-irow:last-child{border-bottom:none}
+.hsev{font-size:9px;font-family:var(--fm);letter-spacing:.06em;padding:2px 6px;border-radius:4px;border:1px solid;flex-shrink:0;text-transform:uppercase}
+.hc-imsg{font-size:12px;color:var(--ink2);flex:1}
+.hc-ival{font-family:var(--fm);font-size:12px;font-weight:500}
+.sev-c{color:var(--cr);border-color:var(--cr);background:var(--cr-bg)}
+.sev-w{color:var(--wn);border-color:var(--wn);background:var(--wn-bg)}
+.sev-i{color:var(--ink3);border-color:var(--brd);background:var(--surf)}
+
+/* ── RECENT ── */
+.recent{padding:0 40px 72px;position:relative;z-index:2}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.sec-label{font-size:11px;font-family:var(--fm);letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.sec-act{font-size:12px;color:var(--ink3);text-decoration:none;transition:color .15s}
+.sec-act:hover{color:var(--ink)}
+.recent-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.rc{background:var(--white);border:1px solid var(--brd);border-radius:10px;padding:20px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s;box-shadow:var(--sh0)}
+.rc:hover{border-color:var(--brd2);box-shadow:var(--sh1);transform:translateY(-2px)}
+.rc:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:10px}
+.rc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.rc-domain{font-size:13px;font-weight:500;color:var(--ink)}
+.rc-score{font-family:var(--fm);font-size:22px;font-weight:500;line-height:1}
+.rc-bar{height:3px;background:var(--surf);border-radius:2px;overflow:hidden;margin-bottom:12px}
+.rc-fill{height:100%;border-radius:2px}
+.rc-meta{display:flex;justify-content:space-between}
+.rc-date{font-size:11px;color:var(--ink4);font-family:var(--fm)}
+.rc-cnt{font-size:11px;color:var(--ink3)}
+
+/* ── HOW ── */
+.how{background:var(--off);border-top:1px solid var(--brd);padding:72px 40px;position:relative;overflow:hidden}
+.how-gbg{position:absolute;inset:0;background-image:linear-gradient(var(--brd) 1px,transparent 1px),linear-gradient(90deg,var(--brd) 1px,transparent 1px);background-size:48px 48px;opacity:.2}
+.how-c{position:relative;z-index:2}
+.how-h2{font-size:32px;font-weight:600;letter-spacing:-.025em;color:var(--ink);margin-bottom:8px}
+.how-sub{font-size:15px;color:var(--ink2);margin-bottom:44px;max-width:440px}
+.how-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--brd);border:1px solid var(--brd);border-radius:12px;overflow:hidden}
+.hs{background:var(--white);padding:28px 24px}
+.hs-num{font-family:var(--fm);font-size:11px;color:var(--ink4);letter-spacing:.06em;margin-bottom:16px}
+.hs-title{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px;letter-spacing:-.01em}
+.hs-desc{font-size:13px;color:var(--ink2);line-height:1.6}
+.hs-badge{display:inline-block;margin-top:14px;font-size:11px;font-family:var(--fm);padding:3px 10px;border-radius:20px;background:var(--surf);color:var(--ink3);border:1px solid var(--brd)}
+
+/* ── CHECKS ── */
+.chks{padding:72px 40px;border-top:1px solid var(--brd)}
+.chks-h2{font-size:32px;font-weight:600;letter-spacing:-.025em;color:var(--ink);margin-bottom:8px}
+.chks-sub{font-size:15px;color:var(--ink2);max-width:440px;margin-bottom:44px}
+.chks-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.ck{background:var(--off);border:1px solid var(--brd);border-radius:12px;padding:28px;transition:border-color .15s}
+.ck:hover{border-color:var(--brd2)}
+.ck-icon{width:36px;height:36px;border-radius:8px;background:var(--white);border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:16px;font-style:normal}
+.ck-title{font-size:16px;font-weight:600;color:var(--ink);margin-bottom:8px;letter-spacing:-.01em}
+.ck-desc{font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:16px}
+.ck-spec{font-size:11px;font-family:var(--fm);color:var(--ink3);padding-top:14px;border-top:1px solid var(--brd);line-height:1.8}
+
+/* ── FOOTER ── */
+.foot{border-top:1px solid var(--brd);padding:24px 40px;display:flex;align-items:center;justify-content:space-between;background:var(--off)}
+.foot-logo{font-family:var(--fd);font-style:italic;font-size:17px;color:var(--ink3)}
+.foot-links{display:flex;gap:20px}
+.foot-a{font-size:12px;color:var(--ink3);text-decoration:none;transition:color .15s}
+.foot-a:hover{color:var(--ink)}
+.foot-a:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:2px}
+.foot-by{font-size:12px;color:var(--ink3)}
+
+/* ── LOADING ── */
+.load-layout{display:grid;grid-template-columns:1fr 1fr;min-height:640px}
+.load-l{padding:64px 56px;border-right:1px solid var(--brd);display:flex;flex-direction:column;justify-content:center}
+.load-ey{font-size:11px;font-family:var(--fm);color:var(--ink3);letter-spacing:.06em;margin-bottom:6px}
+.load-url{font-size:22px;font-weight:600;color:var(--ink);letter-spacing:-.02em;margin-bottom:48px}
+.steps{display:flex;flex-direction:column}
+.srow{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--brd)}
+.srow:last-child{border-bottom:none}
+.sind{width:20px;height:20px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.si-done{background:var(--ex)}
+.si-done::after{content:'';width:8px;height:5px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg) translateY(-1px);display:block}
+.si-active{background:var(--white);border:1.5px solid var(--brd2)}
+.si-active::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--acc);display:block;animation:pd 1.2s ease-in-out infinite}
+@keyframes pd{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.65)}}
+.si-pend{background:var(--surf);border:1.5px solid var(--brd)}
+.sbody{flex:1}
+.sname{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:3px}
+.sname.pend{color:var(--ink3);font-weight:400}
+.sdetail{font-size:11px;font-family:var(--fm);color:var(--ink3)}
+.stime{font-size:11px;font-family:var(--fm);color:var(--ink4);align-self:center}
+.load-r{padding:40px;display:flex;align-items:center;justify-content:center;background:var(--off);position:relative;overflow:hidden}
+.load-prev{width:460px;background:var(--white);border:1px solid var(--brd);border-radius:12px;box-shadow:var(--sh1);overflow:hidden;opacity:.55}
+.lp-bar{height:32px;background:var(--surf);border-bottom:1px solid var(--brd);display:flex;align-items:center;padding:0 12px;gap:6px}
+.lp-dot{width:8px;height:8px;border-radius:50%}
+.lp-url{flex:1;height:18px;background:var(--brd);border-radius:9px;margin:0 20px}
+.lp-body{padding:16px;display:flex;flex-direction:column;gap:8px}
+.sk{height:12px;background:var(--surf);border-radius:3px;animation:sh 1.5s infinite}
+.sk.med{width:75%}.sk.short{width:55%}
+@keyframes sh{0%{opacity:.6}50%{opacity:1}100%{opacity:.6}}
+
+/* ── RESULTS ── */
+.res-wrap{display:grid;grid-template-columns:360px 1fr;min-height:900px}
+.res-l{border-right:1px solid var(--brd);display:flex;flex-direction:column}
+.res-main{padding:36px 40px}
+
+/* Score header */
+.score-hd{padding:28px 24px 20px;border-bottom:1px solid var(--brd);background:var(--off)}
+.score-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.score-domain{font-size:17px;font-weight:600;color:var(--ink);letter-spacing:-.02em}
+.score-ts{font-size:11px;font-family:var(--fm);color:var(--ink3);margin-top:3px}
+.score-acts{display:flex;gap:8px}
+.bsm{font-size:12px;font-family:var(--fs);padding:6px 14px;border-radius:8px;border:1px solid var(--brd);background:var(--white);color:var(--ink2);cursor:pointer;transition:border-color .15s,background .15s;display:inline-flex;align-items:center;gap:5px;box-shadow:var(--sh0)}
+.bsm:hover{border-color:var(--brd2);background:var(--off)}
+.bsm:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.bsm svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.big-score-row{display:flex;align-items:flex-end;gap:12px;margin-bottom:16px}
+.big-num{font-family:var(--fd);font-size:80px;font-weight:400;line-height:.9;letter-spacing:-.02em}
+.big-side{padding-bottom:7px}
+.big-grade{font-size:12px;font-family:var(--fm);font-weight:500;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:4px}
+.big-lbl{font-size:12px;color:var(--ink3)}
+.seg-bar-row{display:flex;height:8px;border-radius:4px;overflow:hidden;gap:2px;margin-bottom:6px}
+.sbp{height:100%;border-radius:2px}
+.seg-lbls{display:flex;gap:2px}
+.sbl{font-size:9px;font-family:var(--fm);color:var(--ink4);letter-spacing:.04em;text-transform:uppercase;flex:1;text-align:center}
+
+/* Cat grid */
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--brd);border-top:1px solid var(--brd);border-bottom:1px solid var(--brd)}
+.cc{background:var(--white);padding:16px 18px}
+.cc-lbl{font-size:10px;font-family:var(--fm);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.cc-score{font-family:var(--fm);font-size:24px;font-weight:500;margin-bottom:6px;line-height:1}
+.cc-bar{height:3px;background:var(--surf);border-radius:2px;overflow:hidden;margin-bottom:5px}
+.cc-fill{height:100%;border-radius:2px}
+.cc-cnt{font-size:11px;color:var(--ink3)}
+
+/* Summary */
+.sum-panel{padding:20px 24px;border-bottom:1px solid var(--brd)}
+.sum-lbl{font-size:10px;font-family:var(--fm);letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:14px}
+.sum-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--brd)}
+.sum-row:last-child{border-bottom:none}
+.sum-k{font-size:12px;color:var(--ink2)}
+.sum-v{font-size:12px;font-family:var(--fm);font-weight:500;color:var(--ink)}
+
+/* Issues */
+.iss-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.iss-title{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+.iss-cnt{font-size:12px;font-family:var(--fm);color:var(--ink3);background:var(--surf);border:1px solid var(--brd);padding:3px 10px;border-radius:20px}
+.filter-row{display:flex;gap:6px;margin-bottom:22px;flex-wrap:wrap}
+.fp{font-size:11px;font-family:var(--fm);padding:5px 12px;border-radius:20px;border:1px solid var(--brd);color:var(--ink3);cursor:pointer;transition:all .15s;background:var(--white);letter-spacing:.02em}
+.fp:hover{border-color:var(--brd2);color:var(--ink2)}
+.fp:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.fp.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* Issue group */
+.ig{margin-bottom:22px}
+.ig-lbl{font-size:10px;font-family:var(--fm);letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:4px;margin-bottom:8px;display:inline-flex;align-items:center;gap:6px}
+.ig-c{background:var(--cr-bg);color:var(--cr)}
+.ig-w{background:var(--wn-bg);color:var(--wn)}
+.ig-i{background:var(--surf);color:var(--ink3)}
+.ig-n{font-size:10px;font-family:var(--fm);opacity:.65}
+
+.ii{background:var(--white);border:1px solid var(--brd);border-radius:10px;padding:14px 16px;margin-bottom:6px;display:flex;align-items:flex-start;gap:14px;transition:border-color .12s,box-shadow .12s}
+.ii:hover{border-color:var(--brd2);box-shadow:var(--sh0)}
+.ii-l{flex:1;min-width:0}
+.ii-chip{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:var(--fm);letter-spacing:.04em;color:var(--ink3);background:var(--surf);border:1px solid var(--brd);padding:2px 8px;border-radius:20px;margin-bottom:6px;text-transform:uppercase}
+.ii-msg{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:4px;line-height:1.4}
+.ii-sel{font-size:11px;font-family:var(--fm);color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ii-r{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.ii-val{font-family:var(--fm);font-size:15px;font-weight:500}
+.swatches{display:flex;gap:3px;align-items:center}
+.sw{width:14px;height:14px;border-radius:2px;border:1px solid var(--brd);display:inline-block}
+.rat{font-size:10px;font-family:var(--fm);color:var(--ink3)}
+
+/* Screenshot */
+.ss-sec{margin-top:32px}
+.ss-lbl{font-size:11px;font-family:var(--fm);letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:14px}
+.ss-frame{border:1px solid var(--brd);border-radius:10px;overflow:hidden;box-shadow:var(--sh0)}
+.ss-chrome{height:36px;background:var(--off);border-bottom:1px solid var(--brd);display:flex;align-items:center;padding:0 12px;gap:6px}
+.ss-d{width:9px;height:9px;border-radius:50%}
+.ss-url{flex:1;height:20px;background:var(--white);border:1px solid var(--brd);border-radius:10px;margin:0 16px;display:flex;align-items:center;padding:0 10px}
+.ss-url-t{font-size:10px;font-family:var(--fm);color:var(--ink3)}
+.ss-area{background:var(--surf);min-height:260px;position:relative;overflow:hidden;padding:18px}
+.sim{background:var(--white);border:1px solid var(--brd);border-radius:8px;overflow:hidden}
+.sim-nav{height:32px;background:var(--white);border-bottom:1px solid var(--brd);display:flex;align-items:center;padding:0 12px;gap:6px}
+.sim-logo-b{width:56px;height:9px;background:var(--ink);border-radius:2px}
+.sim-nav-ls{display:flex;gap:10px;margin-left:14px}
+.sim-nl{width:28px;height:7px;background:var(--surf);border-radius:2px}
+.sim-hero{padding:18px 12px;background:#f8f8ff;border-bottom:1px solid var(--brd)}
+.sim-h1{width:65%;height:13px;background:var(--ink);border-radius:2px;margin-bottom:7px}
+.sim-h1s{width:45%;height:9px;background:var(--surf);border-radius:2px;margin-bottom:11px}
+.sim-hg{display:flex;gap:6px}
+.sim-hc{flex:1;height:30px;background:var(--surf);border-radius:4px}
+.sim-body{padding:12px;display:flex;flex-direction:column;gap:5px}
+.sim-r{height:7px;background:var(--surf);border-radius:2px}
+.sim-rs{width:50%;height:7px;background:var(--surf);border-radius:2px}
+.annot{position:absolute;border:1.5px solid;border-radius:3px;pointer-events:none}
+.annot-lbl{position:absolute;top:-18px;left:0;font-size:9px;font-family:var(--fm);background:var(--white);padding:1px 5px;border-radius:2px;white-space:nowrap;border:1px solid}
+.ac{border-color:var(--cr)}.ac .annot-lbl{color:var(--cr);border-color:var(--cr)}
+.aw{border-color:var(--wn)}.aw .annot-lbl{color:var(--wn);border-color:var(--wn)}
+
+/* ── OG CARD ── */
+.og{width:1200px;height:630px;background:var(--off);border:1px solid var(--brd);display:flex;overflow:hidden}
+.og-l{width:60%;padding:56px 64px;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--brd);background:var(--white)}
+.og-logo{font-family:var(--fd);font-style:italic;font-size:15px;color:var(--ink3)}
+.og-body{flex:1;display:flex;flex-direction:column;justify-content:center;padding:32px 0}
+.og-lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-family:var(--fm);color:var(--ink3);margin-bottom:10px}
+.og-domain{font-size:52px;font-weight:600;letter-spacing:-.04em;color:var(--ink);line-height:1;margin-bottom:28px}
+.og-score{font-family:var(--fd);font-size:128px;font-weight:400;line-height:.88;letter-spacing:-.02em;color:var(--gd)}
+.og-score-sub{font-size:13px;font-family:var(--fm);color:var(--ink3);margin-top:8px}
+.og-url{font-size:12px;font-family:var(--fm);color:var(--ink3)}
+.og-r{flex:1;padding:56px 48px;display:flex;flex-direction:column;justify-content:center;gap:0}
+.og-mr{padding:18px 0;border-bottom:1px solid var(--brd);display:flex;flex-direction:column;gap:6px}
+.og-mr:last-child{border-bottom:none}
+.og-mt{display:flex;justify-content:space-between;align-items:baseline}
+.og-mlbl{font-size:11px;font-family:var(--fm);letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.og-ms{font-family:var(--fm);font-size:18px;font-weight:500}
+.og-bar{height:2px;background:var(--brd);border-radius:1px;overflow:hidden}
+.og-fill{height:100%;border-radius:1px}
+
+/* ── PRINT ── */
+.pr-wrap{background:var(--white);max-width:794px;margin:0 auto;padding:64px 72px;border:1px solid var(--brd);border-radius:14px;box-shadow:var(--sh1)}
+.pr-hd{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:24px;border-bottom:1.5px solid var(--ink);margin-bottom:40px}
+.pr-logo{font-family:var(--fd);font-style:italic;font-size:20px;color:var(--ink)}
+.pr-tag{font-size:10px;font-family:var(--fm);color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-top:4px}
+.pr-meta{text-align:right}
+.pr-domain{font-size:22px;font-weight:600;color:var(--ink);letter-spacing:-.02em}
+.pr-date{font-size:11px;font-family:var(--fm);color:var(--ink3);margin-top:3px}
+.pr-band{display:flex;align-items:center;gap:40px;padding:28px;background:var(--off);border-radius:10px;border:1px solid var(--brd);margin-bottom:40px}
+.pr-big{font-family:var(--fd);font-size:80px;font-weight:400;line-height:.9;color:var(--gd)}
+.pr-grade{font-size:11px;font-family:var(--fm);color:var(--gd);letter-spacing:.08em;text-transform:uppercase;margin-top:6px}
+.pr-metrics{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pr-m{background:var(--white);border:1px solid var(--brd);border-radius:8px;padding:14px}
+.pr-ml{font-size:10px;font-family:var(--fm);letter-spacing:.06em;color:var(--ink3);text-transform:uppercase;margin-bottom:6px}
+.pr-ms{font-family:var(--fm);font-size:22px;font-weight:500;margin-bottom:6px}
+.pr-mb{height:3px;background:var(--brd);border-radius:2px;overflow:hidden}
+.pr-mf{height:100%;border-radius:2px}
+.pr-sec{font-size:10px;font-family:var(--fm);letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin:28px 0 12px;padding-bottom:10px;border-bottom:1px solid var(--brd)}
+.pr-irow{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid #F0EEE8}
+.pr-irow:last-child{border-bottom:none}
+.pr-badge{font-size:9px;font-family:var(--fm);padding:2px 6px;border-radius:4px;border:1px solid;white-space:nowrap;margin-top:2px;letter-spacing:.04em;text-transform:uppercase}
+.pb-c{color:var(--cr);border-color:var(--cr);background:var(--cr-bg)}
+.pb-w{color:var(--wn);border-color:var(--wn);background:var(--wn-bg)}
+.pb-i{color:var(--ink3);border-color:var(--brd);background:var(--surf)}
+.pr-ib{flex:1}
+.pr-it{font-size:12px;color:var(--ink);font-weight:500;margin-bottom:2px}
+.pr-is{font-size:10px;font-family:var(--fm);color:var(--ink3)}
+.pr-iv{font-family:var(--fm);font-size:13px;color:var(--ink);align-self:center;flex-shrink:0}
+.pr-foot{margin-top:48px;padding-top:20px;border-top:1px solid var(--brd);display:flex;justify-content:space-between}
+.pr-ft{font-size:10px;font-family:var(--fm);color:var(--ink3)}
+
+/* ── ERRORS ── */
+.err-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--brd);border:1px solid var(--brd);border-radius:14px;overflow:hidden}
+.ec{background:var(--white);padding:32px 28px;display:flex;flex-direction:column}
+.ec-code{font-size:10px;font-family:var(--fm);letter-spacing:.1em;color:var(--ink4);text-transform:uppercase;margin-bottom:20px}
+.ec-icon{width:40px;height:40px;border-radius:8px;border:1px solid var(--brd);background:var(--surf);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:16px}
+.ec-title{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px;line-height:1.3;letter-spacing:-.01em}
+.ec-desc{font-size:13px;color:var(--ink2);line-height:1.6;flex:1}
+.ec-act{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--acc);font-weight:500;margin-top:20px;cursor:pointer;text-decoration:none;transition:gap .15s;width:fit-content}
+.ec-act:hover{gap:10px}
+.ec-act:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:2px}
+
+/* ── ALL CLEAR ── */
+.ac-main{padding:64px 56px;display:flex;flex-direction:column;justify-content:center}
+.ac-badge{display:inline-flex;align-items:center;gap:8px;background:var(--ex-bg);border:1px solid rgba(26,122,66,.2);color:var(--ex);font-size:12px;font-family:var(--fm);padding:5px 13px;border-radius:20px;margin-bottom:28px;letter-spacing:.04em;width:fit-content}
+.ac-chk{width:14px;height:14px;border-radius:50%;background:var(--ex);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.ac-chk::after{content:'';width:6px;height:4px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg) translateY(-1px);display:block}
+.ac-score{font-family:var(--fd);font-size:96px;font-weight:400;line-height:.9;color:var(--ex);margin-bottom:20px}
+.ac-h2{font-size:28px;font-weight:600;color:var(--ink);letter-spacing:-.025em;margin-bottom:10px}
+.ac-sub{font-size:15px;color:var(--ink2);line-height:1.7;margin-bottom:40px;max-width:440px}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--brd);border:1px solid var(--brd);border-radius:10px;overflow:hidden;margin-bottom:32px}
+.stat-c{background:var(--off);padding:16px}
+.stat-l{font-size:10px;font-family:var(--fm);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.stat-v{font-family:var(--fm);font-size:22px;font-weight:500;color:var(--ex)}
+.ac-note{font-size:13px;color:var(--ink3);padding-top:20px;border-top:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between}
+.reau{color:var(--acc);font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:gap .15s}
+.reau:hover{gap:8px}
+.reau:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:2px}
+
+/* ── MOBILE ── */
+.mob-trio{display:flex;gap:32px;justify-content:center;flex-wrap:wrap;padding:40px 0}
+.mob-lbl{font-size:10px;font-family:var(--fm);color:var(--ink3);letter-spacing:.06em;text-align:center;text-transform:uppercase;margin-bottom:12px}
+.mf{width:390px;background:var(--white);border:1px solid var(--brd);border-radius:36px;overflow:hidden;box-shadow:var(--sh2)}
+.msb{height:44px;background:var(--white);display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.msb-t{font-size:13px;font-weight:600;color:var(--ink)}
+.msb-icons{display:flex;gap:5px;align-items:center}
+.msb-icon{width:14px;height:8px;background:var(--ink);border-radius:2px}
+.mnav{padding:0 20px;height:52px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.92);backdrop-filter:blur(8px)}
+.mlogo{font-family:var(--fd);font-style:italic;font-size:18px;color:var(--ink)}
+.mcontent{padding:24px 20px}
+.mh1{font-size:22px;font-weight:600;letter-spacing:-.025em;line-height:1.2;color:var(--ink);margin-bottom:8px}
+.msub{font-size:13px;color:var(--ink3);line-height:1.5;margin-bottom:20px}
+.minput{background:var(--white);border:1.5px solid var(--brd2);border-radius:10px;height:48px;display:flex;align-items:center;padding:0 14px;font-size:13px;color:var(--ink4);margin-bottom:8px;box-shadow:var(--sh0)}
+.mbtn{background:var(--ink);color:#fff;border-radius:10px;height:48px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;margin-bottom:28px;font-family:var(--fs)}
+.msl{font-size:10px;font-family:var(--fm);letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+.mlist{border:1px solid var(--brd);border-radius:10px;overflow:hidden}
+.mli{padding:12px 14px;background:var(--white);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--brd)}
+.mli:last-child{border-bottom:none}
+.mli-d{font-size:13px;font-weight:500;color:var(--ink)}
+.mli-r{display:flex;align-items:center;gap:8px}
+.mli-s{font-family:var(--fm);font-size:14px;font-weight:500}
+.mli-bar{width:40px;height:3px;background:var(--surf);border-radius:2px;overflow:hidden}
+.mli-fill{height:100%;border-radius:2px}
+
+/* mob loading */
+.msteps{display:flex;flex-direction:column;margin-top:28px}
+.msr{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--brd)}
+.msr:last-child{border-bottom:none}
+.msi{width:16px;height:16px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.msi.done{background:var(--ex)}
+.msi.done::after{content:'';width:6px;height:4px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:rotate(-45deg) translateY(-1px);display:block}
+.msi.active{background:var(--white);border:1.5px solid var(--brd2)}
+.msi.active::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--acc);display:block}
+.msi.pend{background:var(--surf);border:1.5px solid var(--brd)}
+.msn{font-size:13px;color:var(--ink)}
+.msn.pend{color:var(--ink3)}
+.ml-ey{font-size:11px;font-family:var(--fm);color:var(--ink3);margin-bottom:4px}
+.ml-big{font-size:18px;font-weight:600;color:var(--ink);letter-spacing:-.02em;margin-bottom:24px}
+
+/* mob results */
+.mrscore{padding:28px 20px 20px;border-bottom:1px solid var(--brd);text-align:center}
+.mrnum{font-family:var(--fd);font-size:72px;font-weight:400;line-height:.9;margin-bottom:6px}
+.mrdomain{font-size:12px;color:var(--ink3);font-family:var(--fm)}
+.mrgrade{font-size:11px;font-family:var(--fm);letter-spacing:.08em;text-transform:uppercase;margin-top:4px}
+.mcat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--brd);border-top:1px solid var(--brd);border-bottom:1px solid var(--brd)}
+.mcat{background:var(--white);padding:12px 14px}
+.mcl{font-size:9px;font-family:var(--fm);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:5px}
+.mcs{font-family:var(--fm);font-size:17px;font-weight:500;margin-bottom:4px}
+.mcbar{height:2px;border-radius:1px;background:var(--surf);overflow:hidden}
+.mcfill{height:100%;border-radius:1px}
+.miss-list{padding:16px 20px}
+.miss{padding:9px 0;border-bottom:1px solid var(--brd)}
+.miss:last-child{border-bottom:none}
+.miss-top{display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.msev{font-size:8px;font-family:var(--fm);letter-spacing:.04em;padding:1px 5px;border-radius:3px;border:1px solid;flex-shrink:0;text-transform:uppercase}
+.miss-msg{font-size:12px;color:var(--ink);font-weight:500;flex:1}
+.miss-val{font-size:12px;font-family:var(--fm);flex-shrink:0}
+
+/* colour utils */
+.ce{color:var(--ex)} .cg{color:var(--gd)} .cw{color:var(--wn)} .cc{color:var(--cr)}
+</style>
+</head>
+<body>
+<div class="canvas">
+
+<!-- ══════════════════════════════════════════════
+  01  LANDING PAGE
+══════════════════════════════════════════════ -->
+<div style="width:1440px;margin:0 auto 12px"><span class="plabel">01 — Landing page</span></div>
+<div class="screen">
+  <!-- Nav -->
+  <nav class="nav" aria-label="Primary navigation">
+    <a href="#" class="logo" aria-label="Contrast home">Contrast</a>
+    <div class="nav-r">
+      <a href="#how" class="nav-a">How it works</a>
+      <a href="#what" class="nav-a">What we check</a>
+      <a href="https://github.com" class="nav-a" target="_blank" rel="noopener noreferrer">
+        GitHub
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M2 9L9 2M9 2H4M9 2v5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <span class="nav-badge">Free</span>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" aria-labelledby="hero-h1">
+    <div class="gbg" aria-hidden="true"></div>
+    <div class="gfade" aria-hidden="true"></div>
+    <div class="hero-content rel">
+      <div class="eyebrow" aria-hidden="true"><span class="eyebrow-dot"></span>WCAG 2.1 AA — Design audit</div>
+      <h1 class="h1" id="hero-h1">Your product's design,<br><em>objectively scored.</em></h1>
+      <p class="hero-p">Paste any URL. Get an instant report — contrast ratios, missing alt text, typography consistency, spacing. Free, no login required.</p>
+      <div role="search" aria-label="Audit a website">
+        <div class="input-wrap">
+          <label for="url-f" class="sr">Website URL to audit</label>
+          <input class="url-i" id="url-f" type="url" placeholder="https://yourproduct.com" autocomplete="url" spellcheck="false" aria-describedby="url-hint">
+          <button class="audit-btn" type="button">Audit</button>
+        </div>
+        <p id="url-hint" class="sr">Enter a full URL starting with https:// to begin the audit</p>
+      </div>
+      <div class="checks-row" aria-label="What Contrast checks">
+        <div class="ci"><span class="cdot" aria-hidden="true"></span>Color contrast</div>
+        <div class="ci"><span class="cdot" aria-hidden="true"></span>Alt text</div>
+        <div class="ci"><span class="cdot" aria-hidden="true"></span>Typography</div>
+        <div class="ci"><span class="cdot" aria-hidden="true"></span>Spacing</div>
+      </div>
+      <div class="trusted">
+        <div class="faces" aria-hidden="true">
+          <div class="face" style="background:#4A6FA5">AR</div>
+          <div class="face" style="background:#7A6E5C">SK</div>
+          <div class="face" style="background:#5C7A5C">PM</div>
+          <div class="face" style="background:#8A5E6E">LR</div>
+        </div>
+        <p class="trusted-t"><strong>500+ designers</strong> · 12,000 audits run</p>
+      </div>
+    </div>
+
+    <!-- Hero audit card preview -->
+    <aside class="hcard rel" aria-label="Example audit result for stripe.com" aria-hidden="true">
+      <div class="hc-head">
+        <div><div class="hc-domain">stripe.com</div><div class="hc-meta">Audited Jun 14, 2025 · 1.2s</div></div>
+        <div><div class="hc-score-num">74</div><div class="hc-score-g">Good</div></div>
+      </div>
+      <div class="hc-seg" style="margin-top:14px">
+        <div class="hc-seg-piece" style="width:36%;background:var(--ex)"></div>
+        <div class="hc-seg-piece" style="width:27%;background:var(--cr)"></div>
+        <div class="hc-seg-piece" style="width:15%;background:var(--ex)"></div>
+        <div class="hc-seg-piece" style="width:14%;background:var(--ex)"></div>
+      </div>
+      <div class="hc-cats">
+        <div class="hc-cat"><div class="hc-clabel">Contrast</div><div class="hc-cscore ce">91</div><div class="hc-cbar"><div class="hc-cfill" style="width:91%;background:var(--ex)"></div></div></div>
+        <div class="hc-cat"><div class="hc-clabel">Alt text</div><div class="hc-cscore cc">38</div><div class="hc-cbar"><div class="hc-cfill" style="width:38%;background:var(--cr)"></div></div></div>
+        <div class="hc-cat"><div class="hc-clabel">Typography</div><div class="hc-cscore ce">82</div><div class="hc-cbar"><div class="hc-cfill" style="width:82%;background:var(--ex)"></div></div></div>
+        <div class="hc-cat"><div class="hc-clabel">Spacing</div><div class="hc-cscore ce">88</div><div class="hc-cbar"><div class="hc-cfill" style="width:88%;background:var(--ex)"></div></div></div>
+      </div>
+      <div class="hc-issues">
+        <div class="hc-ilabel">Top issues</div>
+        <div class="hc-irow"><span class="hsev sev-c">Critical</span><span class="hc-imsg">.footer-links contrast too low</span><span class="hc-ival cc">2.1:1</span></div>
+        <div class="hc-irow"><span class="hsev sev-c">Critical</span><span class="hc-imsg">img.hero-banner missing alt</span><span class="hc-ival cc">—</span></div>
+        <div class="hc-irow"><span class="hsev sev-w">Warn</span><span class="hc-imsg">Placeholder text contrast</span><span class="hc-ival cw">2.9:1</span></div>
+        <div class="hc-irow"><span class="hsev sev-i">Info</span><span class="hc-imsg">4 font families detected</span><span class="hc-ival" style="color:var(--ink3)">4</span></div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- Recent audits -->
+  <section class="recent rel" aria-labelledby="recent-hd">
+    <div class="sec-hd">
+      <h2 class="sec-label" id="recent-hd">Recent audits</h2>
+      <a href="#" class="sec-act" aria-label="View all audits">View all →</a>
+    </div>
+    <div class="recent-grid" role="list">
+      <article class="rc" role="listitem" tabindex="0" aria-label="stripe.com — score 91, Excellent, 2 issues">
+        <div class="rc-top"><span class="rc-domain">stripe.com</span><span class="rc-score ce">91</span></div>
+        <div class="rc-bar" aria-hidden="true"><div class="rc-fill" style="width:91%;background:var(--ex)"></div></div>
+        <div class="rc-meta"><span class="rc-date">Jun 14 · 1.2s</span><span class="rc-cnt">2 issues</span></div>
+      </article>
+      <article class="rc" role="listitem" tabindex="0" aria-label="linear.app — score 87, Excellent, 4 issues">
+        <div class="rc-top"><span class="rc-domain">linear.app</span><span class="rc-score ce">87</span></div>
+        <div class="rc-bar" aria-hidden="true"><div class="rc-fill" style="width:87%;background:var(--ex)"></div></div>
+        <div class="rc-meta"><span class="rc-date">Jun 14 · 0.9s</span><span class="rc-cnt">4 issues</span></div>
+      </article>
+      <article class="rc" role="listitem" tabindex="0" aria-label="zomato.com — score 63, Needs work, 11 issues">
+        <div class="rc-top"><span class="rc-domain">zomato.com</span><span class="rc-score cw">63</span></div>
+        <div class="rc-bar" aria-hidden="true"><div class="rc-fill" style="width:63%;background:var(--wn)"></div></div>
+        <div class="rc-meta"><span class="rc-date">Jun 13 · 2.1s</span><span class="rc-cnt">11 issues</span></div>
+      </article>
+      <article class="rc" role="listitem" tabindex="0" aria-label="swiggy.com — score 71, Good, 8 issues">
+        <div class="rc-top"><span class="rc-domain">swiggy.com</span><span class="rc-score cg">71</span></div>
+        <div class="rc-bar" aria-hidden="true"><div class="rc-fill" style="width:71%;background:var(--gd)"></div></div>
+        <div class="rc-meta"><span class="rc-date">Jun 13 · 1.8s</span><span class="rc-cnt">8 issues</span></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="how" id="how" aria-labelledby="how-hd">
+    <div class="how-gbg" aria-hidden="true"></div>
+    <div class="how-c">
+      <h2 class="how-h2" id="how-hd">How it works</h2>
+      <p class="how-sub">From URL to shareable report in four steps.</p>
+      <div class="how-steps" role="list">
+        <div class="hs" role="listitem"><div class="hs-num">01</div><div class="hs-title">Paste your URL</div><p class="hs-desc">Enter any publicly accessible website. No login, no extension, no setup needed.</p><span class="hs-badge">https://yoursite.com</span></div>
+        <div class="hs" role="listitem"><div class="hs-num">02</div><div class="hs-title">We run the audit</div><p class="hs-desc">A headless browser loads the page and runs WCAG checks across contrast, images, type, and layout.</p><span class="hs-badge">~10 seconds</span></div>
+        <div class="hs" role="listitem"><div class="hs-num">03</div><div class="hs-title">Read your report</div><p class="hs-desc">Get a scored report with every issue listed by severity, CSS selector, and measured value.</p><span class="hs-badge">Scored 0–100</span></div>
+        <div class="hs" role="listitem"><div class="hs-num">04</div><div class="hs-title">Share or download</div><p class="hs-desc">Every audit gets a permanent URL. Share with your team or download a one-page PDF.</p><span class="hs-badge">PDF · Link · OG card</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What we check -->
+  <section class="chks" id="what" aria-labelledby="chks-hd">
+    <h2 class="chks-h2" id="chks-hd">What we check</h2>
+    <p class="chks-sub">Four categories, weighted by impact on real users.</p>
+    <div class="chks-grid" role="list">
+      <div class="ck" role="listitem"><div class="ck-icon" aria-hidden="true">◑</div><h3 class="ck-title">Color contrast</h3><p class="ck-desc">Every text–background pair measured against WCAG 2.1 AA. We surface the actual ratio so you know exactly what needs fixing.</p><div class="ck-spec">Threshold: 4.5:1 normal · 3:1 large text<br>Weight: 40% of overall score</div></div>
+      <div class="ck" role="listitem"><div class="ck-icon" aria-hidden="true">⊡</div><h3 class="ck-title">Alt text coverage</h3><p class="ck-desc">Every meaningful image checked for a non-empty alt attribute. Decorative images with role="presentation" correctly excluded.</p><div class="ck-spec">WCAG 1.1.1 — Level A<br>Weight: 30% of overall score</div></div>
+      <div class="ck" role="listitem"><div class="ck-icon" aria-hidden="true">Aa</div><h3 class="ck-title">Typography consistency</h3><p class="ck-desc">Counts distinct font families loaded on the page. More than two almost always indicates design system inconsistency.</p><div class="ck-spec">Target: ≤2 font families<br>Weight: 15% of overall score</div></div>
+      <div class="ck" role="listitem"><div class="ck-icon" aria-hidden="true">⊞</div><h3 class="ck-title">Spacing consistency</h3><p class="ck-desc">Margin and padding values sampled and checked against an 8px grid. Off-grid values signal ad-hoc spacing that breaks visual rhythm.</p><div class="ck-spec">Grid: 8px base unit<br>Weight: 15% of overall score</div></div>
+    </div>
+  </section>
+
+  <footer class="foot" role="contentinfo">
+    <span class="foot-logo">Contrast</span>
+    <nav class="foot-links" aria-label="Footer links"><a href="#" class="foot-a">About</a><a href="#" class="foot-a">GitHub</a><a href="#" class="foot-a">WCAG 2.1</a></nav>
+    <span class="foot-by">Built by Anubhav Raj</span>
+  </footer>
+</div><!-- /screen 1 -->
+
+
+<!-- ══════════════════════════════════════════════
+  02  LOADING STATE
+══════════════════════════════════════════════ -->
+<div style="width:1440px;margin:0 auto 12px;padding-top:80px"><span class="plabel">02 — Loading state</span></div>
+<div class="screen">
+  <nav class="nav" aria-label="Navigation"><a href="#" class="logo">Contrast</a><div class="nav-r"><a href="#" class="nav-a">Cancel audit</a></div></nav>
+  <div class="load-layout">
+    <div class="load-l">
+      <div aria-live="polite" aria-atomic="false">
+        <p class="load-ey">Auditing</p>
+        <p class="load-url">stripe.com</p>
+        <div class="steps" role="list">
+          <div class="srow" role="listitem" aria-label="Done: Screenshot captured in 0.4 seconds">
+            <div class="sind si-done" aria-hidden="true"></div>
+            <div class="sbody"><p class="sname">Screenshot captured</p><p class="sdetail">Full-page render · 1440 × 3280px</p></div>
+            <span class="stime">0.4s</span>
+          </div>
+          <div class="srow" role="listitem" aria-label="Done: Contrast ratios checked in 1.8 seconds">
+            <div class="sind si-done" aria-hidden="true"></div>
+            <div class="sbody"><p class="sname">Contrast ratios checked</p><p class="sdetail">342 text nodes · 89 colour pairs</p></div>
+            <span class="stime">1.8s</span>
+          </div>
+          <div class="srow" role="listitem" aria-label="In progress: Scanning for missing alt text">
+            <div class="sind si-active" aria-hidden="true"></div>
+            <div class="sbody"><p class="sname">Scanning for missing alt text</p><p class="sdetail">34 of 51 images checked…</p></div>
+            <span class="stime" aria-hidden="true"></span>
+          </div>
+          <div class="srow" role="listitem" aria-label="Pending: Calculating score">
+            <div class="sind si-pend" aria-hidden="true"></div>
+            <div class="sbody"><p class="sname pend">Calculating your score</p><p class="sdetail" style="color:var(--ink4)">Weighted across all categories</p></div>
+            <span class="stime" aria-hidden="true"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="load-r" aria-hidden="true">
+      <div class="gbg" style="opacity:.15"></div>
+      <div class="load-prev rel">
+        <div class="lp-bar"><div class="lp-dot" style="background:#FF5F57"></div><div class="lp-dot" style="background:#FFBD2E"></div><div class="lp-dot" style="background:#28C840"></div><div class="lp-url"></div></div>
+        <div class="lp-body"><div class="sk"></div><div class="sk med"></div><div class="sk short"></div><div class="sk" style="height:40px;border-radius:4px"></div><div class="sk"></div><div class="sk med"></div><div class="sk short"></div><div class="sk"></div><div class="sk med"></div></div>
+      </div>
+    </div>
+  </div>
+  <footer class="foot"><span class="foot-logo">Contrast</span><span class="foot-by">Built by Anubhav Raj</span></footer>
+</div><!-- /screen 2 -->
+
+
+<!-- ══════════════════════════════════════════════
+  03  RESULTS PAGE
+══════════════════════════════════════════════ -->
+<div style="width:1440px;margin:0 auto 12px;padding-top:80px"><span class="plabel">03 — Results page</span></div>
+<div class="screen">
+  <nav class="nav" aria-label="Navigation"><a href="#" class="logo">Contrast</a><div class="nav-r"><a href="#" class="nav-a">← New audit</a></div></nav>
+  <main class="res-wrap">
+    <aside class="res-l" aria-label="Audit summary">
+      <div class="score-hd">
+        <div class="score-top">
+          <div><h1 class="score-domain">stripe.com</h1><p class="score-ts">Jun 14, 2025 · 11:32 AM · 1.2s</p></div>
+          <div class="score-acts">
+            <button class="bsm" aria-label="Share audit result"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="10" cy="2.5" r="1.5"/><circle cx="2.5" cy="6.5" r="1.5"/><circle cx="10" cy="10.5" r="1.5"/><path d="M4 5.5l4.5-2.5M4 7.5l4.5 2.5"/></svg>Share</button>
+            <button class="bsm" aria-label="Download PDF report"><svg viewBox="0 0 13 13" aria-hidden="true"><path d="M6.5 2v6M4 6l2.5 2.5L9 6M2 10v.5a1 1 0 001 1h7a1 1 0 001-1V10"/></svg>PDF</button>
+          </div>
+        </div>
+        <div class="big-score-row">
+          <div class="big-num cg" aria-label="Overall score: 74 out of 100">74</div>
+          <div class="big-side"><span class="big-grade cg">Good</span><span class="big-lbl">Overall score</span></div>
+        </div>
+        <div aria-hidden="true">
+          <div class="seg-bar-row">
+            <div class="sbp" style="width:36%;background:var(--ex)" title="Contrast 91"></div>
+            <div class="sbp" style="width:27%;background:var(--cr)" title="Alt text 38"></div>
+            <div class="sbp" style="width:14%;background:var(--ex)" title="Typography 82"></div>
+            <div class="sbp" style="width:13%;background:var(--ex)" title="Spacing 88"></div>
+          </div>
+          <div class="seg-lbls"><span class="sbl">Contrast</span><span class="sbl">Alt text</span><span class="sbl">Type</span><span class="sbl">Space</span></div>
+        </div>
+      </div>
+      <div class="cat-grid" role="list" aria-label="Category scores">
+        <div class="cc" role="listitem" aria-label="Contrast: 91, 2 issues"><div class="cc-lbl">Contrast</div><div class="cc-score ce">91</div><div class="cc-bar" aria-hidden="true"><div class="cc-fill" style="width:91%;background:var(--ex)"></div></div><div class="cc-cnt">2 issues</div></div>
+        <div class="cc" role="listitem" aria-label="Alt text: 38, 6 issues"><div class="cc-lbl">Alt text</div><div class="cc-score cc">38</div><div class="cc-bar" aria-hidden="true"><div class="cc-fill" style="width:38%;background:var(--cr)"></div></div><div class="cc-cnt">6 issues</div></div>
+        <div class="cc" role="listitem" aria-label="Typography: 82, 1 issue"><div class="cc-lbl">Typography</div><div class="cc-score ce">82</div><div class="cc-bar" aria-hidden="true"><div class="cc-fill" style="width:82%;background:var(--ex)"></div></div><div class="cc-cnt">1 issue</div></div>
+        <div class="cc" role="listitem" aria-label="Spacing: 88, 0 issues"><div class="cc-lbl">Spacing</div><div class="cc-score ce">88</div><div class="cc-bar" aria-hidden="true"><div class="cc-fill" style="width:88%;background:var(--ex)"></div></div><div class="cc-cnt">0 issues</div></div>
+      </div>
+      <div class="sum-panel">
+        <div class="sum-lbl">Audit summary</div>
+        <div class="sum-row"><span class="sum-k">Text pairs checked</span><span class="sum-v">342</span></div>
+        <div class="sum-row"><span class="sum-k">Colour pairs extracted</span><span class="sum-v">89</span></div>
+        <div class="sum-row"><span class="sum-k">Images found</span><span class="sum-v">51</span></div>
+        <div class="sum-row"><span class="sum-k">Images with alt text</span><span class="sum-v">20 / 51</span></div>
+        <div class="sum-row"><span class="sum-k">Font families</span><span class="sum-v">4</span></div>
+        <div class="sum-row"><span class="sum-k">Spacing values sampled</span><span class="sum-v">128</span></div>
+        <div class="sum-row"><span class="sum-k">WCAG level</span><span class="sum-v">AA 2.1</span></div>
+      </div>
+    </aside>
+
+    <div class="res-main">
+      <div class="iss-hd"><h2 class="iss-title">14 issues found</h2><span class="iss-cnt" aria-label="14 total">14 total</span></div>
+      <div class="filter-row" role="group" aria-label="Filter by severity">
+        <button class="fp on" aria-pressed="true">All (14)</button>
+        <button class="fp" aria-pressed="false">Critical (3)</button>
+        <button class="fp" aria-pressed="false">Warnings (7)</button>
+        <button class="fp" aria-pressed="false">Info (4)</button>
+      </div>
+
+      <!-- Critical -->
+      <div class="ig" aria-labelledby="ig-c">
+        <div class="ig-lbl ig-c" id="ig-c">Critical <span class="ig-n">· 3</span></div>
+        <article class="ii" aria-label="Critical: footer link contrast 2.1 to 1">
+          <div class="ii-l"><span class="ii-chip">◑ Contrast</span><p class="ii-msg">Text contrast below WCAG AA threshold</p><p class="ii-sel">.footer-links > a:hover, .footer-links > a:visited</p></div>
+          <div class="ii-r"><span class="ii-val cc">2.1:1</span><div class="swatches" aria-label="Light grey on white"><span class="sw" style="background:#CCCCCC" title="#CCCCCC"></span><span class="sw" style="background:#FFFFFF" title="#FFFFFF"></span><span class="rat">req. 4.5:1</span></div></div>
+        </article>
+        <article class="ii" aria-label="Critical: hero banner image missing alt text">
+          <div class="ii-l"><span class="ii-chip">⊡ Alt text</span><p class="ii-msg">Image missing alt attribute</p><p class="ii-sel">img.hero-banner-image[src="hero-visual.jpg"]</p></div>
+          <div class="ii-r"><span class="ii-val cc">missing</span></div>
+        </article>
+        <article class="ii" aria-label="Critical: PayPal partner logo missing alt text">
+          <div class="ii-l"><span class="ii-chip">⊡ Alt text</span><p class="ii-msg">Image missing alt attribute</p><p class="ii-sel">img.partner-logo[data-brand="paypal"]</p></div>
+          <div class="ii-r"><span class="ii-val cc">missing</span></div>
+        </article>
+      </div>
+
+      <!-- Warnings -->
+      <div class="ig" aria-labelledby="ig-w">
+        <div class="ig-lbl ig-w" id="ig-w">Warnings <span class="ig-n">· 7</span></div>
+        <article class="ii" aria-label="Warning: subheading contrast 3.8 to 1">
+          <div class="ii-l"><span class="ii-chip">◑ Contrast</span><p class="ii-msg">Text contrast below AA for small text</p><p class="ii-sel">.subheading-label, .section-eyebrow</p></div>
+          <div class="ii-r"><span class="ii-val cw">3.8:1</span><div class="swatches"><span class="sw" style="background:#8A8A9A"></span><span class="sw" style="background:#F4F4F8"></span><span class="rat">req. 4.5:1</span></div></div>
+        </article>
+        <article class="ii" aria-label="Warning: input placeholder contrast 2.9 to 1">
+          <div class="ii-l"><span class="ii-chip">◑ Contrast</span><p class="ii-msg">Low contrast placeholder text</p><p class="ii-sel">input[type="email"]::placeholder, input[type="text"]::placeholder</p></div>
+          <div class="ii-r"><span class="ii-val cw">2.9:1</span><div class="swatches"><span class="sw" style="background:#BBBBCC"></span><span class="sw" style="background:#FFFFFF"></span><span class="rat">req. 4.5:1</span></div></div>
+        </article>
+        <article class="ii" aria-label="Warning: blog thumbnails missing alt text">
+          <div class="ii-l"><span class="ii-chip">⊡ Alt text</span><p class="ii-msg">Image missing alt attribute</p><p class="ii-sel">img.blog-thumbnail:nth-child(3), img.blog-thumbnail:nth-child(4)</p></div>
+          <div class="ii-r"><span class="ii-val cw">missing</span></div>
+        </article>
+        <article class="ii" aria-label="Warning: team photos missing alt text">
+          <div class="ii-l"><span class="ii-chip">⊡ Alt text</span><p class="ii-msg">Image missing alt attribute</p><p class="ii-sel">img.team-photo[data-name="ceo"], img.team-photo[data-name="cto"]</p></div>
+          <div class="ii-r"><span class="ii-val cw">missing</span></div>
+        </article>
+        <article class="ii" aria-label="Warning: case study cover missing alt text">
+          <div class="ii-l"><span class="ii-chip">⊡ Alt text</span><p class="ii-msg">Image missing alt attribute</p><p class="ii-sel">img.case-study-cover[data-id="stripe-vs-braintree"]</p></div>
+          <div class="ii-r"><span class="ii-val cw">missing</span></div>
+        </article>
+      </div>
+
+      <!-- Info -->
+      <div class="ig" aria-labelledby="ig-i">
+        <div class="ig-lbl ig-i" id="ig-i">Info <span class="ig-n">· 4</span></div>
+        <article class="ii" aria-label="Info: 4 font families detected">
+          <div class="ii-l"><span class="ii-chip">Aa Typography</span><p class="ii-msg">4 font families detected — consider reducing to 2</p><p class="ii-sel">Inter, Stripe Sans Display, Fira Code, Georgia</p></div>
+          <div class="ii-r"><span class="ii-val" style="color:var(--ink3)">4</span></div>
+        </article>
+        <article class="ii" aria-label="Info: passes AA, fails AAA at 4.6 to 1">
+          <div class="ii-l"><span class="ii-chip">◑ Contrast</span><p class="ii-msg">Passes AA, fails AAA standard</p><p class="ii-sel">.body-copy p, .card-description</p></div>
+          <div class="ii-r"><span class="ii-val" style="color:var(--ink3)">4.6:1</span><span class="rat">AAA req. 7:1</span></div>
+        </article>
+        <article class="ii" aria-label="Info: decorative image has non-empty alt text">
+          <div class="ii-l"><span class="ii-chip">⊡ Alt text</span><p class="ii-msg">Decorative image has non-empty alt — consider alt=""</p><p class="ii-sel">img.bg-pattern-hero[alt="background pattern"]</p></div>
+          <div class="ii-r"><span class="ii-val" style="color:var(--ink3)">review</span></div>
+        </article>
+        <article class="ii" aria-label="Info: 3 spacing values off 8px grid">
+          <div class="ii-l"><span class="ii-chip">⊞ Spacing</span><p class="ii-msg">3 spacing values off 8px grid</p><p class="ii-sel">.card-inner (padding:13px), .hero-cta (margin-top:22px), .nav-item (gap:7px)</p></div>
+          <div class="ii-r"><span class="ii-val" style="color:var(--ink3)">3</span></div>
+        </article>
+      </div>
+
+      <!-- Screenshot -->
+      <div class="ss-sec" aria-labelledby="ss-lbl">
+        <h3 class="ss-lbl" id="ss-lbl">Page screenshot with annotations</h3>
+        <div class="ss-frame">
+          <div class="ss-chrome" aria-hidden="true">
+            <div class="ss-d" style="background:#FF5F57"></div>
+            <div class="ss-d" style="background:#FFBD2E"></div>
+            <div class="ss-d" style="background:#28C840"></div>
+            <div class="ss-url"><span class="ss-url-t">https://stripe.com</span></div>
+          </div>
+          <div class="ss-area" aria-label="Annotated screenshot of stripe.com showing flagged accessibility issues">
+            <div class="sim">
+              <div class="sim-nav" aria-hidden="true"><div class="sim-logo-b"></div><div class="sim-nav-ls"><div class="sim-nl"></div><div class="sim-nl"></div><div class="sim-nl"></div></div></div>
+              <div class="sim-hero" aria-hidden="true"><div class="sim-h1"></div><div class="sim-h1s"></div><div class="sim-hg"><div class="sim-hc"></div><div class="sim-hc"></div><div class="sim-hc"></div></div></div>
+              <div class="sim-body" aria-hidden="true"><div class="sim-r"></div><div class="sim-rs"></div><div class="sim-r"></div></div>
+            </div>
+            <div class="annot ac" style="top:50px;left:20px;width:148px;height:28px" aria-hidden="true"><span class="annot-lbl">2.1:1 — contrast fail</span></div>
+            <div class="annot ac" style="top:92px;left:20px;width:208px;height:64px" aria-hidden="true"><span class="annot-lbl">missing alt text</span></div>
+            <div class="annot aw" style="top:174px;left:20px;width:128px;height:18px" aria-hidden="true"><span class="annot-lbl" style="color:var(--wn);border-color:var(--wn)">3.8:1 — warn</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="foot"><span class="foot-logo">Contrast</span><span class="foot-by">Built by Anubhav Raj</span></footer>
+</div><!-- /screen 3 -->
+
+
+<!-- ══════════════════════════════════════════════
+  04  OG SHARE CARD  1200 × 630
+══════════════════════════════════════════════ -->
+<div style="width:1440px;margin:0 auto 12px;padding-top:80px"><span class="plabel">04 — Share card · 1200 × 630</span></div>
+<div class="pwrap" style="display:flex;justify-content:center;padding:40px 0">
+  <div style="transform:scale(.88);transform-origin:top center;width:1200px">
+    <div class="og" role="img" aria-label="OG card: stripe.com scored 74 out of 100">
+      <div class="og-l">
+        <div class="og-logo" aria-hidden="true">Contrast</div>
+        <div class="og-body">
+          <p class="og-lbl">Design audit for</p>
+          <p class="og-domain">stripe.com</p>
+          <div><div class="og-score" aria-label="Score: 74">74</div><p class="og-score-sub">Good · Jun 14, 2025 · 14 issues found</p></div>
+        </div>
+        <p class="og-url">audit.anubhxv.design/audit/k8m2p1n9</p>
+      </div>
+      <div class="og-r" aria-hidden="true">
+        <div class="og-mr"><div class="og-mt"><span class="og-mlbl">Color contrast</span><span class="og-ms ce">91</span></div><div class="og-bar"><div class="og-fill" style="width:91%;background:var(--ex)"></div></div></div>
+        <div class="og-mr"><div class="og-mt"><span class="og-mlbl">Alt text</span><span class="og-ms cc">38</span></div><div class="og-bar"><div class="og-fill" style="width:38%;background:var(--cr)"></div></div></div>
+        <div class="og-mr"><div class="og-mt"><span class="og-mlbl">Typography</span><span class="og-ms ce">82</span></div><div class="og-bar"><div class="og-fill" style="width:82%;background:var(--ex)"></div></div></div>
+        <div class="og-mr"><div class="og-mt"><span class="og-mlbl">Spacing</span><span class="og-ms ce">88</span></div><div class="og-bar"><div class="og-fill" style="width:88%;background:var(--ex)"></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+  05  PRINT REPORT
+══════════════════════════════════════════════ -->
+<div style="width:1440px;margin:0 auto 12px;padding-top:80px"><span class="plabel">05 — PDF report · A4</span></div>
+<div class="pwrap" style="padding:40px 0">
+  <div class="pr-wrap">
+    <div class="pr-hd"><div><div class="pr-logo">Contrast</div><div class="pr-tag">Design Accessibility Report</div></div><div class="pr-meta"><div class="pr-domain">stripe.com</div><div class="pr-date">June 14, 2025 · audit.anubhxv.design</div></div></div>
+    <div class="pr-band" aria-label="Overall score 74, Good">
+      <div><div class="pr-big">74</div><div class="pr-grade">Good</div></div>
+      <div class="pr-metrics">
+        <div class="pr-m"><div class="pr-ml">Color contrast</div><div class="pr-ms" style="color:var(--ex)">91</div><div class="pr-mb"><div class="pr-mf" style="width:91%;background:var(--ex)"></div></div></div>
+        <div class="pr-m"><div class="pr-ml">Alt text</div><div class="pr-ms" style="color:var(--cr)">38</div><div class="pr-mb"><div class="pr-mf" style="width:38%;background:var(--cr)"></div></div></div>
+        <div class="pr-m"><div class="pr-ml">Typography</div><div class="pr-ms" style="color:var(--ex)">82</div><div class="pr-mb"><div class="pr-mf" style="width:82%;background:var(--ex)"></div></div></div>
+        <div class="pr-m"><div class="pr-ml">Spacing</div><div class="pr-ms" style="color:var(--ex)">88</div><div class="pr-mb"><div class="pr-mf" style="width:88%;background:var(--ex)"></div></div></div>
+      </div>
+    </div>
+    <div class="pr-sec">Issues found · 14 total</div>
+    <div role="list">
+      <div class="pr-irow" role="listitem"><div class="pr-badge pb-c">Critical</div><div class="pr-ib"><div class="pr-it">Text contrast below WCAG AA threshold</div><div class="pr-is">.footer-links > a:hover</div></div><div class="pr-iv">2.1:1</div></div>
+      <div class="pr-irow" role="listitem"><div class="pr-badge pb-c">Critical</div><div class="pr-ib"><div class="pr-it">Image missing alt attribute</div><div class="pr-is">img.hero-banner-image</div></div><div class="pr-iv">missing</div></div>
+      <div class="pr-irow" role="listitem"><div class="pr-badge pb-c">Critical</div><div class="pr-ib"><div class="pr-it">Image missing alt attribute</div><div class="pr-is">img.partner-logo[data-brand="paypal"]</div></div><div class="pr-iv">missing</div></div>
+      <div class="pr-irow" role="listitem"><div class="pr-badge pb-w">Warn</div><div class="pr-ib"><div class="pr-it">Text contrast below AA for small text</div><div class="pr-is">.subheading-label</div></div><div class="pr-iv">3.8:1</div></div>
+      <div class="pr-irow" role="listitem"><div class="pr-badge pb-w">Warn</div><div class="pr-ib"><div class="pr-it">Low contrast placeholder text</div><div class="pr-is">input[type="email"]::placeholder</div></div><div class="pr-iv">2.9:1</div></div>
+      <div class="pr-irow" role="listitem"><div class="pr-badge pb-w">Warn</div><div class="pr-ib"><div class="pr-it">4 images missing alt attributes</div><div class="pr-is">img.blog-thumbnail-3, img.team-photo-ceo, img.team-photo-cto, img.case-study-cover</div></div><div class="pr-iv">4 items</div></div>
+      <div class="pr-irow" role="listitem"><div class="pr-badge pb-i">Info</div><div class="pr-ib"><div class="pr-it">4 font families — consider reducing to 2</div><div class="pr-is">Inter, Stripe Sans Display, Fira Code, Georgia</div></div><div class="pr-iv">4</div></div>
+    </div>
+    <div class="pr-foot"><div class="pr-ft">Generated by Contrast · audit.anubhxv.design</div><div class="pr-ft">audit/k8m2p1n9 · June 14, 2025 · WCAG 2.1 AA</div></div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+  06  ERROR STATES
+══════════════════════════════════════════════ -->
+<div style="width:1440px;margin:0 auto 12px;padding-top:80px"><span class="plabel">06 — Error states</span></div>
+<div class="screen" style="min-height:auto">
+  <nav class="nav"><a href="#" class="logo">Contrast</a><div class="nav-r"><a href="#" class="nav-a">← Back</a></div></nav>
+  <div style="padding:40px">
+    <div style="margin-bottom:24px"><h2 style="font-size:17px;font-weight:600;color:var(--ink);margin-bottom:4px;letter-spacing:-.01em">Error states</h2><p style="font-size:13px;color:var(--ink3)">Calm and reassuring. Every error gives a clear next step.</p></div>
+    <div class="err-grid" role="list">
+      <div class="ec" role="listitem"><div class="ec-code">ERR_INVALID_URL</div><div class="ec-icon" aria-hidden="true">⌗</div><h3 class="ec-title">That doesn't look like a valid URL</h3><p class="ec-desc">Try including https:// at the start. We need a full address to reach the page and run an audit.</p><a class="ec-act" href="#" aria-label="Try entering URL again">Try again →</a></div>
+      <div class="ec" role="listitem"><div class="ec-code">ERR_UNREACHABLE</div><div class="ec-icon" aria-hidden="true">⚡</div><h3 class="ec-title">We couldn't reach that page</h3><p class="ec-desc">The page didn't respond within 15 seconds. It might be down or blocking automated browsers. Try a different URL.</p><a class="ec-act" href="#" aria-label="Try again">Try again →</a></div>
+      <div class="ec" role="listitem"><div class="ec-code">ERR_LOGIN_REQUIRED</div><div class="ec-icon" aria-hidden="true">🔒</div><h3 class="ec-title">This page requires a login</h3><p class="ec-desc">Contrast only audits publicly accessible pages. Try the homepage or a public marketing page instead.</p><a class="ec-act" href="#" aria-label="Audit homepage">Audit homepage instead →</a></div>
+      <div class="ec" role="listitem"><div class="ec-code">ERR_TIMEOUT</div><div class="ec-icon" aria-hidden="true">⏱</div><h3 class="ec-title">This page is taking too long</h3><p class="ec-desc">The page took over 15 seconds to load. It may have heavy scripts or a slow server. Try again or use a lighter URL.</p><a class="ec-act" href="#" aria-label="Retry the audit">Retry →</a></div>
+      <div class="ec" role="listitem"><div class="ec-code">ERR_RATE_LIMITED</div><div class="ec-icon" aria-hidden="true">⏸</div><h3 class="ec-title">You've hit the hourly limit</h3><p class="ec-desc">10 audits per hour keeps the tool free for everyone. Your limit resets at 12:32 PM — about 28 minutes from now.</p><a class="ec-act" href="#" aria-label="View past audits">View past audits →</a></div>
+      <div class="ec" role="listitem"><div class="ec-code">ERR_UNKNOWN</div><div class="ec-icon" aria-hidden="true">◌</div><h3 class="ec-title">Something went wrong</h3><p class="ec-desc">Your URL has been saved. Give it a moment — this usually clears up on its own. If it keeps happening, try a different page.</p><a class="ec-act" href="#" aria-label="Retry the audit">Retry →</a></div>
+    </div>
+  </div>
+  <footer class="foot"><span class="foot-logo">Contrast</span><span class="foot-by">Built by Anubhav Raj</span></footer>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+  07  ALL CLEAR STATE
+══════════════════════════════════════════════ -->
+<div style="width:1440px;margin:0 auto 12px;padding-top:80px"><span class="plabel">07 — All clear · linear.app</span></div>
+<div class="screen">
+  <nav class="nav"><a href="#" class="logo">Contrast</a><div class="nav-r"><a href="#" class="nav-a">← New audit</a></div></nav>
+  <main class="res-wrap">
+    <aside class="res-l" aria-label="Audit summary for linear.app">
+      <div class="score-hd">
+        <div class="score-top"><div><h1 class="score-domain">linear.app</h1><p class="score-ts">Jun 14, 2025 · 09:14 AM · 0.9s</p></div><div class="score-acts"><button class="bsm" aria-label="Share result"><svg viewBox="0 0 13 13" aria-hidden="true"><circle cx="10" cy="2.5" r="1.5"/><circle cx="2.5" cy="6.5" r="1.5"/><circle cx="10" cy="10.5" r="1.5"/><path d="M4 5.5l4.5-2.5M4 7.5l4.5 2.5"/></svg>Share</button><button class="bsm" aria-label="Download PDF"><svg viewBox="0 0 13 13" aria-hidden="true"><path d="M6.5 2v6M4 6l2.5 2.5L9 6M2 10v.5a1 1 0 001 1h7a1 1 0 001-1V10"/></svg>PDF</button></div></div>
+        <div class="big-score-row"><div class="big-num ce" aria-label="Score: 97 out of 100">97</div><div class="big-side"><span class="big-grade ce">Excellent</span><span class="big-lbl">Overall score</span></div></div>
+        <div aria-hidden="true"><div class="seg-bar-row"><div class="sbp" style="width:36%;background:var(--ex)"></div><div class="sbp" style="width:27%;background:var(--ex)"></div><div class="sbp" style="width:14%;background:var(--ex)"></div><div class="sbp" style="width:13%;background:var(--ex)"></div></div><div class="seg-lbls"><span class="sbl">Contrast</span><span class="sbl">Alt text</span><span class="sbl">Type</span><span class="sbl">Space</span></div></div>
+      </div>
+      <div class="cat-grid" role="list">
+        <div class="cc" role="listitem" aria-label="Contrast: 98, 0 issues"><div class="cc-lbl">Contrast</div><div class="cc-score ce">98</div><div class="cc-bar" aria-hidden="true"><div class="cc-fill" style="width:98%;background:var(--ex)"></div></div><div class="cc-cnt">0 issues</div></div>
+        <div class="cc" role="listitem" aria-label="Alt text: 100, 0 issues"><div class="cc-lbl">Alt text</div><div class="cc-score ce">100</div><div class="cc-bar" aria-hidden="true"><div class="cc-fill" style="width:100%;background:var(--ex)"></div></div><div class="cc-cnt">0 issues</div></div>
+        <div class="cc" role="listitem" aria-label="Typography: 94, 0 issues"><div class="cc-lbl">Typography</div><div class="cc-score ce">94</div><div class="cc-bar" aria-hidden="true"><div class="cc-fill" style="width:94%;background:var(--ex)"></div></div><div class="cc-cnt">0 issues</div></div>
+        <div class="cc" role="listitem" aria-label="Spacing: 96, 0 issues"><div class="cc-lbl">Spacing</div><div class="cc-score ce">96</div><div class="cc-bar" aria-hidden="true"><div class="cc-fill" style="width:96%;background:var(--ex)"></div></div><div class="cc-cnt">0 issues</div></div>
+      </div>
+      <div class="sum-panel">
+        <div class="sum-lbl">What we checked</div>
+        <div class="sum-row"><span class="sum-k">Text pairs checked</span><span class="sum-v">142</span></div>
+        <div class="sum-row"><span class="sum-k">Images checked</span><span class="sum-v">38</span></div>
+        <div class="sum-row"><span class="sum-k">Images with alt text</span><span class="sum-v">38 / 38</span></div>
+        <div class="sum-row"><span class="sum-k">Font families</span><span class="sum-v">2</span></div>
+        <div class="sum-row"><span class="sum-k">Spacing values sampled</span><span class="sum-v">96</span></div>
+        <div class="sum-row"><span class="sum-k">On-grid values</span><span class="sum-v">96 / 96</span></div>
+      </div>
+    </aside>
+    <div class="ac-main">
+      <div class="ac-badge" aria-label="All checks passed"><span class="ac-chk" aria-hidden="true"></span>All checks passed</div>
+      <div class="ac-score" aria-hidden="true">97</div>
+      <h2 class="ac-h2">linear.app passes every check.</h2>
+      <p class="ac-sub">All text meets WCAG 2.1 AA contrast requirements. Every image has meaningful alt text. Typography is consistent. Spacing follows a coherent 8px grid throughout the entire page.</p>
+      <div class="stat-row" role="list" aria-label="Audit statistics">
+        <div class="stat-c" role="listitem" aria-label="142 text pairs checked"><div class="stat-l">Text pairs</div><div class="stat-v">142</div></div>
+        <div class="stat-c" role="listitem" aria-label="38 images all with alt text"><div class="stat-l">Images</div><div class="stat-v">38</div></div>
+        <div class="stat-c" role="listitem" aria-label="2 font families"><div class="stat-l">Font families</div><div class="stat-v">2</div></div>
+        <div class="stat-c" role="listitem" aria-label="0.9 seconds audit time"><div class="stat-l">Audit time</div><div class="stat-v">0.9s</div></div>
+      </div>
+      <div class="ac-note">
+        <span>Checked Jun 14, 2025 at 09:14 AM</span>
+        <a href="#" class="reau" aria-label="Re-audit linear.app">Re-audit →</a>
+      </div>
+    </div>
+  </main>
+  <footer class="foot"><span class="foot-logo">Contrast</span><span class="foot-by">Built by Anubhav Raj</span></footer>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+  08  MOBILE VIEWS
+══════════════════════════════════════════════ -->
+<div style="width:1440px;margin:0 auto 12px;padding-top:80px"><span class="plabel">08 — Mobile · 390px</span></div>
+<div class="pwrap">
+  <div class="mob-trio">
+
+    <!-- Mobile Landing -->
+    <div>
+      <p class="mob-lbl">Landing</p>
+      <div class="mf" role="main" aria-label="Mobile landing page">
+        <div class="msb" aria-hidden="true"><span class="msb-t">9:41</span><div class="msb-icons"><div class="msb-icon" style="width:16px;opacity:.3"></div><div class="msb-icon" style="opacity:.6"></div><div class="msb-icon"></div></div></div>
+        <nav class="mnav" aria-label="Mobile nav"><span class="mlogo">Contrast</span><a href="#" style="font-size:12px;color:var(--ink3);text-decoration:none">GitHub</a></nav>
+        <div class="mcontent">
+          <h1 class="mh1">Audit any website's design. Free.</h1>
+          <p class="msub">Checks contrast · alt text · typography · spacing</p>
+          <div role="search" aria-label="Audit a website">
+            <label for="mob-url" class="sr">Website URL</label>
+            <div class="minput" role="presentation">https://yourproduct.com</div>
+            <div class="mbtn" role="button" aria-label="Run audit">Audit</div>
+          </div>
+          <p class="msl">Recent audits</p>
+          <div class="mlist" role="list">
+            <div class="mli" role="listitem" aria-label="stripe.com scored 91"><span class="mli-d">stripe.com</span><div class="mli-r"><div class="mli-bar" aria-hidden="true"><div class="mli-fill" style="width:91%;background:var(--ex)"></div></div><span class="mli-s ce">91</span></div></div>
+            <div class="mli" role="listitem" aria-label="linear.app scored 87"><span class="mli-d">linear.app</span><div class="mli-r"><div class="mli-bar" aria-hidden="true"><div class="mli-fill" style="width:87%;background:var(--ex)"></div></div><span class="mli-s ce">87</span></div></div>
+            <div class="mli" role="listitem" aria-label="zomato.com scored 63"><span class="mli-d">zomato.com</span><div class="mli-r"><div class="mli-bar" aria-hidden="true"><div class="mli-fill" style="width:63%;background:var(--wn)"></div></div><span class="mli-s cw">63</span></div></div>
+            <div class="mli" role="listitem" aria-label="swiggy.com scored 71"><span class="mli-d">swiggy.com</span><div class="mli-r"><div class="mli-bar" aria-hidden="true"><div class="mli-fill" style="width:71%;background:var(--gd)"></div></div><span class="mli-s cg">71</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Loading -->
+    <div>
+      <p class="mob-lbl">Loading</p>
+      <div class="mf" aria-label="Mobile loading state">
+        <div class="msb" aria-hidden="true"><span class="msb-t">9:41</span><div class="msb-icons"><div class="msb-icon" style="width:16px;opacity:.3"></div><div class="msb-icon" style="opacity:.6"></div><div class="msb-icon"></div></div></div>
+        <nav class="mnav" aria-label="Navigation"><span class="mlogo">Contrast</span><a href="#" style="font-size:12px;color:var(--ink3);text-decoration:none">Cancel</a></nav>
+        <div class="mcontent">
+          <div aria-live="polite">
+            <p class="ml-ey">Auditing</p>
+            <p class="ml-big">stripe.com</p>
+            <div class="msteps" role="list">
+              <div class="msr" role="listitem" aria-label="Done: Screenshot captured"><div class="msi done" aria-hidden="true"></div><span class="msn">Screenshot captured</span></div>
+              <div class="msr" role="listitem" aria-label="Done: Contrast ratios checked"><div class="msi done" aria-hidden="true"></div><span class="msn">Contrast ratios checked</span></div>
+              <div class="msr" role="listitem" aria-label="In progress: Scanning alt text"><div class="msi active" aria-hidden="true"></div><span class="msn">Scanning alt text…</span></div>
+              <div class="msr" role="listitem" aria-label="Pending: Calculating score"><div class="msi pend" aria-hidden="true"></div><span class="msn pend">Calculating score</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Results -->
+    <div>
+      <p class="mob-lbl">Results</p>
+      <div class="mf" role="main" aria-label="Mobile results for stripe.com">
+        <div class="msb" aria-hidden="true"><span class="msb-t">9:41</span><div class="msb-icons"><div class="msb-icon" style="width:16px;opacity:.3"></div><div class="msb-icon" style="opacity:.6"></div><div class="msb-icon"></div></div></div>
+        <nav class="mnav" aria-label="Navigation">
+          <a href="#" style="font-size:13px;color:var(--ink3);text-decoration:none" aria-label="New audit">← New audit</a>
+          <div style="display:flex;gap:8px">
+            <button class="bsm" style="font-size:11px;padding:4px 10px" aria-label="Share">Share</button>
+            <button class="bsm" style="font-size:11px;padding:4px 10px" aria-label="PDF">PDF</button>
+          </div>
+        </nav>
+        <div class="mrscore">
+          <p class="mrdomain">stripe.com · Jun 14</p>
+          <div class="mrnum cg" aria-label="Score: 74">74</div>
+          <p class="mrgrade cg">Good</p>
+        </div>
+        <div class="mcat-grid" role="list" aria-label="Category scores">
+          <div class="mcat" role="listitem" aria-label="Contrast: 91"><div class="mcl">Contrast</div><div class="mcs ce">91</div><div class="mcbar" aria-hidden="true"><div class="mcfill" style="width:91%;background:var(--ex)"></div></div></div>
+          <div class="mcat" role="listitem" aria-label="Alt text: 38"><div class="mcl">Alt text</div><div class="mcs cc">38</div><div class="mcbar" aria-hidden="true"><div class="mcfill" style="width:38%;background:var(--cr)"></div></div></div>
+          <div class="mcat" role="listitem" aria-label="Typography: 82"><div class="mcl">Typography</div><div class="mcs ce">82</div><div class="mcbar" aria-hidden="true"><div class="mcfill" style="width:82%;background:var(--ex)"></div></div></div>
+          <div class="mcat" role="listitem" aria-label="Spacing: 88"><div class="mcl">Spacing</div><div class="mcs ce">88</div><div class="mcbar" aria-hidden="true"><div class="mcfill" style="width:88%;background:var(--ex)"></div></div></div>
+        </div>
+        <div class="miss-list">
+          <p class="msl" style="margin-bottom:10px">14 issues</p>
+          <div role="list">
+            <div class="miss" role="listitem" aria-label="Critical: footer link contrast 2.1 to 1"><div class="miss-top"><span class="msev sev-c">Critical</span><span class="miss-msg">Footer link contrast</span><span class="miss-val cc">2.1:1</span></div></div>
+            <div class="miss" role="listitem" aria-label="Critical: hero banner missing alt"><div class="miss-top"><span class="msev sev-c">Critical</span><span class="miss-msg">Hero banner missing alt</span><span class="miss-val cc">—</span></div></div>
+            <div class="miss" role="listitem" aria-label="Warning: subheading contrast 3.8 to 1"><div class="miss-top"><span class="msev sev-w">Warn</span><span class="miss-msg">Subheading contrast</span><span class="miss-val cw">3.8:1</span></div></div>
+            <div class="miss" role="listitem" aria-label="Info: 4 font families"><div class="miss-top"><span class="msev sev-i">Info</span><span class="miss-msg">4 font families</span><span class="miss-val" style="color:var(--ink3)">4</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /canvas -->
+</body>
+</html>

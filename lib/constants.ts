@@ -130,6 +130,7 @@ export const IMAGES = {
     "https://raw.githubusercontent.com/Anubhx/portfolio-nextjs/master/public/images/languageTalk.jpg" as string | null,
   virtuStore:
     "https://mir-s3-cdn-cf.behance.net/projects/404/68fabb168030969.Y3JvcCw0MzIwLDMzNzksMCww.png" as string | null,
+  contrast: "/images/contrast/hero.png" as string | null,
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -373,6 +374,32 @@ export const PROJECTS = [
       caseStudy: { enabled: false, href: "" },
       live: { enabled: true, href: "https://querion-by-anubhav.vercel.app" },
       github: { enabled: true, href: "https://github.com/Anubhx/Querion" },
+      behance: { enabled: false, href: "" },
+      figma: { enabled: false, href: "" },
+      docs: { enabled: false, href: "" },
+      video: { enabled: false, href: "" },
+    } as Record<ProjectActionType, ProjectAction>,
+  },
+  {
+    slug: "contrast",
+    title: "Contrast",
+    category: "Engineering Builds" as ProjectCategory,
+    template: "engineering" as ProjectTemplate,
+    type: "Design Audit Tool",
+    description:
+      "Any designer should be able to paste a URL and know in 10 seconds whether their product is accessible — without needing to be an accessibility engineer.",
+    image: IMAGES.contrast,
+    stack: ["Next.js", "TypeScript", "Playwright", "axe-core", "Gemini API", "Vercel KV"],
+    highlights: [] as string[],
+    role: "Designer + Engineer",
+    timeline: "June 2025",
+    accentColor: "#C8F04D",
+    year: "2025",
+    featured: false,
+    actions: {
+      caseStudy: { enabled: true, href: "/work/contrast" },
+      live: { enabled: false, href: "" },
+      github: { enabled: false, href: "" },
       behance: { enabled: false, href: "" },
       figma: { enabled: false, href: "" },
       docs: { enabled: false, href: "" },

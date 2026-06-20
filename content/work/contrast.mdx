@@ -1,0 +1,142 @@
+---
+title: "Contrast"
+---
+
+## The problem I kept running into
+
+Every time I handed off a design, the same conversation happened: *"Did you check accessibility?"* And the answer was usually a vague yes — because the tools available to check were either developer-facing walls of JSON (axe, Lighthouse) or enterprise invoices (Siteimprove, Deque).
+
+Designers don't have an instrument. Developers have Lighthouse. Marketers have SEMrush. Designers — the people actually choosing the colors, setting the type sizes, deciding the contrast ratios — have nothing that speaks their language.
+
+That's the gap Contrast was built to close.
+
+---
+
+## What it is
+
+**Contrast** is a free, public web tool that audits any live URL for design quality and accessibility compliance. Paste a URL, get a scored report in under 15 seconds.
+
+It returns four scores:
+
+| Category | What it checks | Weight |
+|---|---|---|
+| **Color Contrast** | All text/background pairs vs. WCAG AA (4.5:1 normal, 3:1 large) | 40% |
+| **Alt Text** | Images missing meaningful alt attributes | 30% |
+| **Typography** | Distinct font families loaded (ideal: ≤ 2) | 15% |
+| **Spacing** | Block elements against an 8px grid | 15% |
+
+The weighted overall score — 0 to 100 — gives you a single number to share, screenshot, or argue about in Figma.
+
+---
+
+## What I built (and how)
+
+This wasn't a weekend mockup. The full backend pipeline runs when a URL is submitted:
+
+```
+URL submitted
+    │
+    ▼
+Next.js API Route — validates URL, applies rate limiting
+    │
+    ├── Playwright (via Browserless.io) visits the page headlessly
+    │     └── Injects custom DOM evaluation script:
+    │           text color pairs, image alt status, font families, spacing values
+    ├── axe-core injected → WCAG violations returned
+    ├── lib/detectors/ calculate four category scores
+    ├── Gemini 1.5 Flash → plain-English fix suggestions (V2)
+    ├── lib/scoring.ts → weighted score 0–100
+    └── Result stored in Vercel KV → returns { id, result }
+```
+
+Each audit gets a unique URL (`/audit/[id]`) — shareable, bookmarkable, server-rendered for OG previews.
+
+---
+
+## The design is the product
+
+This is the part that mattered most to me: **the output of the tool had to be as well-designed as the products it audited.**
+
+The design system for Contrast was built around a single principle: *a precision diagnostic instrument, not a SaaS dashboard.*
+
+- **Color:** Near-black base (`#0C0C0D`) with a single acid chartreuse accent (`#C8F04D`) — the color engineers associate with CI systems passing. No purple gradients. No glowing cards.
+- **Typography:** Instrument Serif appears exactly *twice* — the score number and the logo wordmark. Inter handles everything else.
+- **Score Ring:** The signature element. An SVG arc that animates in 1.2s with the score counting up from zero. The color maps to the grade: excellent, good, warn, critical.
+- **Issue List:** Monospace for data values (`2.8:1`), bordered severity badges (no filled backgrounds), no hover effects — it's a report, not an interactive list.
+
+The anti-pattern I was deliberately avoiding: making it look like an AI tool. No "Powered by ✨" callouts. No abstract hero illustrations. The screenshot of the audited page IS the visual.
+
+---
+
+## Technical decisions worth explaining
+
+**Why Browserless.io instead of Playwright directly on Vercel?**
+
+Vercel serverless functions have a 50MB limit. Playwright + Chromium is ~350MB. Browserless hosts the browser for you — you send a script, they execute it. 1,000 sessions/month free is enough to validate the concept.
+
+**Why Vercel KV (Redis) for storing audit results?**
+
+Each audit ID maps to a cached JSON blob of the full result. This makes the shareable URL work server-side without re-running the audit, and it lets the OG image route pull the score to generate a proper social preview card.
+
+**Why axe-core over manual checks?**
+
+axe-core is the industry standard for WCAG compliance checking. Injecting it via Playwright means I get battle-tested contrast ratio logic for free. My custom `lib/detectors/` layer adds the design-specific checks (typography drift, spacing drift) that axe doesn't cover.
+
+**Rate limiting:**
+
+10 audits per IP per hour. Currently in-memory (resets on cold start) — the production upgrade is to move it to KV with a sliding window.
+
+---
+
+## The audit result, annotated
+
+![Audit result page showing scores and issue list](/images/contrast/audit.png)
+
+The results page is intentionally information-dense but readable. Left to right:
+
+1. **Score ring** — the one number that matters
+2. **Four category cards** — each with a progress bar and issue count
+3. **Issue list** — sorted by severity (critical → warn → info), with the actual measured value in monospace on the right
+4. **Screenshot** of the audited page for visual reference
+
+Share button copies the `/audit/[id]` URL to clipboard. The OG image for that URL is generated server-side and includes the score — so when you paste it into a LinkedIn post, the preview card shows the number.
+
+---
+
+## What I learned building this
+
+**Headless browser data is messy.** `getComputedStyle` returns `rgba(0, 0, 0, 0)` for transparent backgrounds constantly. Filtering those pairs out before running contrast calculations took more iteration than I expected. Edge cases: SVG text, pseudo-elements, elements inside shadow DOM — all invisible to querySelector.
+
+**The design constraint sharpens every decision.** When you decide upfront that the accent color appears in exactly one place, every other visual question becomes easier. I spent less time arguing with myself about aesthetics and more time on the actual audit logic.
+
+**Scoring is opinionated.** The weighting (contrast 40%, alt text 30%) is a design decision, not an objective truth. I documented the rationale so future me — or anyone who forks this — can challenge it with data.
+
+**The tool needed to pass its own audit.** The Contrast homepage was built to score 90+ on its own checks. Dogfooding the tool while building it caught several real issues: a heading that failed contrast, two images missing alt text during development, and a moment where I accidentally loaded three font families. Fixed before launch.
+
+---
+
+## Scope: V1 vs V2
+
+**V1 (shipped):**
+- URL input → audit pipeline → scored results page
+- Shareable result URL (`/audit/[id]`)
+- OG image for LinkedIn/Twitter sharing
+- PDF report via browser print
+
+**V2 (planned):**
+- AI fix suggestions via Gemini — not "your contrast ratio is 2.8:1" but "change the paragraph text from `#8A8A96` to `#666666` to pass WCAG AA"
+- Button tap target audit (44×44px minimum)
+- Compare mode — audit two URLs side by side
+- URL result caching — don't burn a Browserless session on the same URL twice in 24 hours
+
+---
+
+## Why it's not a UX case study
+
+This isn't a case study about user research, personas, or journey maps. It's a record of building something real, making engineering and design decisions that are coupled and interdependent, and shipping it to a public URL.
+
+The "user research" was reading designer Twitter and noticing that the same complaint appeared constantly: *"I know my design probably has accessibility issues but I don't know how to check."*
+
+The prototype was the product. The feedback loop was real audits on real sites.
+
+That's the kind of work I want to do more of.
